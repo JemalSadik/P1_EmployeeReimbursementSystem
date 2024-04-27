@@ -26,10 +26,9 @@ public class UserService {
         return userDAO.findAll();
     }
 
-    public User createUser(User user, String role) {
-        String roleDesc = Roles.valueOf(role).getDescription();
-        if (!roleDesc.isEmpty()) {
-            user.setRole(roleDesc);
+    public User createUser(User user) {
+        if (!Roles.valueOf(user.getRole()).getDescription().isEmpty()) // if the specified user role is valid
+        {
             // TODO
             return userDAO.save(user);
         }

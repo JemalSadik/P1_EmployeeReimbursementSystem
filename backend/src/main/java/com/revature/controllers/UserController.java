@@ -30,9 +30,9 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/{role}")
-    public ResponseEntity <User> createUser(@RequestBody User user, @PathVariable String role){
-        User savedUser = userService.createUser(user,role);
+    @PostMapping("")
+    public ResponseEntity <User> createUser(@RequestBody User user){
+        User savedUser = userService.createUser(user);
         // TODO: error handling
 
         return ResponseEntity.ok(savedUser);
