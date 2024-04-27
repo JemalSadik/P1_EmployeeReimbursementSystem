@@ -22,7 +22,7 @@ public class UserController {
 
     // get all users (manager)
     @GetMapping("")
-    public ResponseEntity<List<User>> ggetAllUsers() {
+    public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
 
         // TODO: check if list is empty and return appropriate message
