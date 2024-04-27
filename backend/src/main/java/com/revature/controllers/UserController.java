@@ -1,6 +1,5 @@
 package com.revature.controllers;
 
-import com.revature.models.Reimbursement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +21,8 @@ public class UserController {
     }
 
     // get all users (manager)
-    @GetMapping("/user")
-    public ResponseEntity<List<User>> getAllReimbursements() {
+    @GetMapping("")
+    public ResponseEntity<List<User>> ggetAllUsers() {
         List<User> users = userService.getAllUsers();
 
         // TODO: check if list is empty and return appropriate message
