@@ -17,7 +17,7 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public List<User> getAllUser() {
+    public List<User> getAllUsers() {
         // TODO: get logged in user
         /*
         if the logged in user has a wrong Role, throw exception
