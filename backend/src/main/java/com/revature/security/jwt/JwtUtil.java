@@ -12,7 +12,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // TODO: Handle the secret key more securely
+    // TODO: Handle the secret key more securely (env variables?)
     private static final String SECRET = "secret_key"; // You should secure this key
     private static final Algorithm algorithm = Algorithm.HMAC256(SECRET);
 
@@ -34,6 +34,7 @@ public class JwtUtil {
                     .withSubject(username)
                     .build(); // Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
+            // TODO: verify token is valid
             return jwt.getSubject().equals(username);
         } catch (JWTVerificationException e) {
             // TODO: Implement logging
