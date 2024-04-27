@@ -41,10 +41,10 @@ public class SecurityConfig {
     // configures HTTP request security declaring how requests are secured
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager, JwtUtil jwtUtil) throws Exception {
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authManager, jwtUtil);
-        JwtAuthorizationFilter jwtAuthorizationFilter = new JwtAuthorizationFilter(jwtUtil);
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authManager, jwtUtil); // jwtAuthenticationFilter
+        JwtAuthorizationFilter jwtAuthorizationFilter = new JwtAuthorizationFilter(jwtUtil); // jwtAuthorizationFilter
 
-        jwtAuthenticationFilter.setFilterProcessesUrl("/login"); // configure filter trigger path
+        jwtAuthenticationFilter.setFilterProcessesUrl("/login"); // configure authentication filter trigger path
 
         http
                 .addFilter(jwtAuthenticationFilter)
@@ -58,7 +58,7 @@ public class SecurityConfig {
     }
 
     // use BCrypt to hash passwords
-    // Make a bean to use in service layer
+    // Make a bean to use in service layer (dependency injection)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
