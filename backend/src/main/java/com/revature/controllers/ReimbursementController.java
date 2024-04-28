@@ -1,5 +1,7 @@
 package com.revature.controllers;
 
+import com.revature.exceptions.InvalidStatusException;
+import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.Reimbursement;
 import com.revature.services.ReimbursementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 @RequestMapping("/reimbursements")
@@ -22,72 +23,89 @@ public class ReimbursementController {
     }
 
     // get all reimbursements (manager)
+    @GetMapping
     public ResponseEntity<List<Reimbursement>> getAllReimbursements() {
         List<Reimbursement> reimbursements = reimbService.getAllReimbursements();
-
-        // TODO: check if list is empty and return appropriate message
-
+        // TODO: catch invalid user role error and return a 403 status code
         return ResponseEntity.ok(reimbursements);
     }
 
-    // get all pending reimbursements (for manager)
+    // get all pending reimbursements (manager)
     public ResponseEntity<List<Reimbursement>> getAllPendingReimbursements() {
         List<Reimbursement> pendingReimb = reimbService.getAllPendingReimbursement();
-
-        // TODO: check if list is empty and return appropriate message
-
+        // TODO: catch invalid user role error and return a 403 status code
         return ResponseEntity.ok(pendingReimb);
     }
 
     // get all reimbursements by user ID (user)
     @GetMapping("/all/{userId}")
-    public ResponseEntity<List<Reimbursement>> getAllReimbursementsByUserId(@PathVariable int userId) {
-        List<Reimbursement> userReimbursements = reimbService.getAllReimbursementsByUserId(userId);
-
-        // TODO: check if list is empty or an exception is thrown
-
-        return ResponseEntity.ok(userReimbursements);
+    public ResponseEntity<Object> getAllReimbursementsByUserId(@PathVariable int userId) {
+        try {
+            List<Reimbursement> userReimbursements = reimbService.getAllReimbursementsByUserId(userId);
+            return ResponseEntity.ok(userReimbursements);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body("No user found for ID: " + userId);
+        }
     }
 
     // get all pending reimbursements for user ID (user)
     @GetMapping("/pending/{userId}")
-    public ResponseEntity<List<Reimbursement>> getAllPendingReimbursementsByUserId(@PathVariable int userId) {
-        List<Reimbursement> pendingUserReimbursements = reimbService.getAllPendingReimbursementsByUserId(userId);
-
-        // TODO: check if list is empty or an exception is thrown
-
-        return ResponseEntity.ok(pendingUserReimbursements);
+    public ResponseEntity<Object> getAllPendingReimbursementsByUserId(@PathVariable int userId) {
+        try {
+            List<Reimbursement> pendingUserReimbursements = reimbService.getAllPendingReimbursementsByUserId(userId);
+            return ResponseEntity.ok(pendingUserReimbursements);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body("No user found for ID: " + userId);
+        }
     }
 
     // Create a new reimbursement for a user ID (user)
     @PostMapping("/{userId}")
-    public ResponseEntity<Reimbursement> createReimbursement(@RequestBody Reimbursement reimbursement, @PathVariable int userId) {
-        Reimbursement reimb = reimbService.createReimbursement(reimbursement, userId);
-
-        // TODO: check if exception is thrown
-
-        return ResponseEntity.ok(reimb);
+    public ResponseEntity<Object> createReimbursement(@RequestBody Reimbursement reimbursement, @PathVariable int userId) {
+        try {
+            Reimbursement reimb = reimbService.createReimbursement(reimbursement, userId);
+            return ResponseEntity.ok(reimb);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body("No user found for ID: " + userId);
+        }
     }
 
     // update a reimbursement status by reimbursement ID (manager)
     @PatchMapping("/status/{reimbId}")
-    public ResponseEntity<Reimbursement> updateReimbursementStatus(@RequestBody String status, @PathVariable int reimbId) {
-        status = status.toLowerCase().trim();
-        Reimbursement reimb = reimbService.updateReimbursementStatus(reimbId, status);
-
-        // TODO: Check if exception is thrown
-
-        return ResponseEntity.ok(reimb);
+    public ResponseEntity<Object> updateReimbursementStatus(@RequestBody String status, @PathVariable int reimbId) {
+        try {
+            Reimbursement reimb = reimbService.updateReimbursementStatus(reimbId, status);
+            // null means status of reimbursement was not "Pending"
+            if (reimb == null) {
+                return ResponseEntity.status(409).body("Status of a reimbursement must be PENDING in order to update a reimbursement status");
+            }
+            return ResponseEntity.ok(reimb);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body("No reimbursement found for ID: " + reimbId);
+        } catch (InvalidStatusException e) {
+            return ResponseEntity.status(409).body(status.toUpperCase() + " is not a valid status for a reimbursement");
+        }
+        // TODO: catch invalid user role error and return a 403 status code
     }
 
-    // update a reimbursement description by reimbursement ID (user)
+    /**
+     * update a pending reimbursement description by reimbursement ID (user)
+     * @param description the updated reimbursement description
+     * @param reimbId the reimbursement ID for the reimbursement to update
+     * @return ResponseEntity with the updated reimbursement or appropriate error message
+     */
     @PatchMapping("/description/{reimbId}")
-    public ResponseEntity<Reimbursement> updateReimbursementDescription(@RequestBody String description, @PathVariable int reimbId) {
-        Reimbursement reimb = reimbService.updateReimbursementDescription(reimbId, description);
-
-        // TODO: Check if exception is thrown
-
-        return ResponseEntity.ok(reimb);
+    public ResponseEntity<Object> updatePendingReimbursementDescription(@RequestBody String description, @PathVariable int reimbId) {
+        try {
+            Reimbursement reimb = reimbService.updatePendingReimbursementDescription(reimbId, description);
+            // null means reimbursement status was not pending
+            if (reimb == null) {
+                return ResponseEntity.status(409).body("Reimbursement status must be PENDING to update the description");
+            }
+            return ResponseEntity.ok(reimb);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body("No reimbursement found for ID: " + reimbId);
+        }
     }
 
 }
