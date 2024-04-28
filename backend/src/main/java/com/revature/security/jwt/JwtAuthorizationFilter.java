@@ -1,16 +1,18 @@
 package com.revature.security.jwt;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.revature.daos.UserDAO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.util.Collections;
+import java.util.List;
 
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
@@ -29,8 +31,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             String token = header.substring(7);
             try {
                 String username = jwtUtil.getUsernameFromToken(token);
+                List<String> roles = jwtUtil.getRolesFromToken(token);
+                List<SimpleGrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).toList();
                 if (jwtUtil.validateToken(token, username)) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList()); // use username to create principals
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities); // use username to create principals
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (JWTVerificationException exception) {
