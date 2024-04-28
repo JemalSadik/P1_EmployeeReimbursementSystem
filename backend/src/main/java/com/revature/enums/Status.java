@@ -1,5 +1,7 @@
 package com.revature.enums;
 
+import com.revature.exceptions.InvalidStatusException;
+
 public enum Status {
 
     PENDING("Pending", 1),
@@ -22,21 +24,20 @@ public enum Status {
         return level;
     }
 
-    /*
-    public String formatStatus(String description) {
-        switch (description) {
-            case "approved":
-                return APPROVED.getDescription();
-            case "denied":
-                return DENIED.getDescription();
-            case "pending":
-                return PENDING.getDescription();
-            default:
-                // TODO: throw exception for invalid status
-                return "";
-        }
+    /**
+     *
+     * @param status the status to format
+     * @return the status enum description of the passed status
+     * @throws InvalidStatusException if the status is not a valid status
+     */
+    public static String formatStatus(String status) throws InvalidStatusException {
+        return switch (status) {
+            case "approved" -> APPROVED.getDescription();
+            case "denied" -> DENIED.getDescription();
+            case "pending" -> PENDING.getDescription();
+            default -> throw new InvalidStatusException();
+        };
     }
-    */
 
     @Override
     public String toString() {
