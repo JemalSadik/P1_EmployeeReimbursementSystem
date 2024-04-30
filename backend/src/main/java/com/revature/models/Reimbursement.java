@@ -27,6 +27,13 @@ public class Reimbursement {
     public Reimbursement() {
     }
 
+    public Reimbursement(String description, float amount, String status, User user) {
+        this.description = description;
+        this.amount = amount;
+        this.status = status;
+        this.user = user;
+    }
+
     public Reimbursement(int reimbId, String description, float amount, String status, User user) {
         this.reimbId = reimbId;
         this.description = description;
