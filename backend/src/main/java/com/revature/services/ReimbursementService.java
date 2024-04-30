@@ -23,35 +23,6 @@ public class ReimbursementService {
         this.userDAO = userDAO;
     }
 
-
-    /**
-     * Check if a user is authenticated.
-     * @return true if the user is authenticated and false otherwise
-     */
-    /*private boolean isAuthenticated() {
-        // get authentication token
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // check if authentication token is not null, is not an instance of anonymous authentication token (sometimes used by spring security if no user is logged in) and the authentication token is authenticated
-        return authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
-    }*/
-
-    /**
-     * Check if a user has the specific role passed
-     * @param role the role to check if the user has
-     * @return true if the user is authenticated and has the specified role, false otherwise
-     */
-    /*private boolean hasRole(String role) {
-        // get authentication token
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // check authentication token is not null and authentication token is authenticated
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return false;
-        }
-        // check authentication token has role specified
-        return authentication.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals(role));
-    }*/
-
     /**
      * Get a list of all reimbursements. Managers can get a list of all reimbursements.
      * @return a list of all reimbursements
