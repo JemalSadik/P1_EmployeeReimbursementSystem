@@ -1,38 +1,102 @@
-export const ModalReimbursement: React.FC<any> = ({reimbursement, key, isOpen, onClose}) => {
+import axios from "axios";
+import { useState } from "react";
+import { Button, Form, Modal } from "react-bootstrap";
 
+export const ModalReimbursement: React.FC<any> = ({reimbursement, key}) => {
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    let descInput: string = reimbursement.description;
+    let statusInput: string = reimbursement.status;
+
+    const getDesc = (input: React.ChangeEvent<HTMLTextAreaElement>) => {
+        descInput = input.target.value;
+    }
+
+    const getStatus = (input: React.ChangeEvent<HTMLSelectElement>) => {
+        statusInput = input.target.value;
+    }
+
+    const updateReimbursement = async () => {
+        let checkClose: boolean = false;
+        // TODO: add {withCredentials: true} to axios request for session support
+        if (descInput !== reimbursement.description) {
+            const resp = await axios.patch(`http://localhost:8080/${reimbursement.reimbId}/description`, descInput)
+                .then((resp) => checkClose = true)
+                .catch((error) => {
+                    // change checkClose to false to ensure error is displayed
+                    checkClose = false;
+
+                    const errorContainer = document.getElementById(`reimbErrorContainer${key}`);
+                    
+                    if (errorContainer) {
+                        let errorEl = document.createElement('p');
+                        errorEl.innerHTML = error;
+                        errorContainer.appendChild(errorEl);
+                    } else {
+                        alert(error);
+                    }
+                });
+        }
+        // TODO: check if user role is manager first before sending request to update status
+        if (statusInput !== reimbursement.status) {
+            const resp = await axios.patch(`http://localhost:8080/${reimbursement.reimbId}/status`, statusInput)
+                .then((resp) => checkClose = true)
+                .catch((error) => {
+                    // change checkClose to false to ensure error is displayed
+                    checkClose = false;
+
+                    const errorContainer = document.getElementById(`reimbErrorContainer${key}`);
+                    
+                    if (errorContainer) {
+                        let errorEl = document.createElement('p');
+                        errorEl.innerHTML = error;
+                        errorContainer.appendChild(errorEl);
+                    } else {
+                        alert(error);
+                    }
+                });
+        }
+        setShow(checkClose);
+    }
 
     return (
-        <div className="modal" id={`reimbursementModal${key}`} tabIndex={-1} aria-labelledby={`reimbursementModal${key}Label`} aria-hidden="true">
-            <div className="modal-dialog">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h1 className="modal-title fs-5" id={`reimbursementModal${key}Label`}>Reimbursement</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div className="modal-body">
-                        // TODO: Add onChange event to update description
-                        <div className="form-floating">
-                            {reimbursement.status == "Pending" ? <textarea className="form-control" value={reimbursement.description} id={`reimbDescription${key}`}></textarea> : <textarea className="form-control" value={reimbursement.description} disabled></textarea>}
-                            <label htmlFor={`reimbDescription${key}`}>Description</label>
-                        </div>
-                        <div className="form-floating">
-                            <input type="text" id={`reimbAmount${key}`} value={`$${reimbursement.amount}`} disabled/>
-                            <label htmlFor={`reimbAmount${key}`}>Amount</label>
-                        </div>
-                        <div className="form-floating">
-                            // TODO: Update ternary to check if user role is manager
-                            {reimbursement.status == "Pending" ? <select className="form-select" id={`reimbStatus${key}`}>
+        <Modal show={show} onHide={handleClose}>
+            <Modal.Dialog>
+                <Modal.Header closeButton>
+                    <Modal.Title >
+                        <h1 id={`reimbursementModal${key}Label`}>Reimbursement</h1>
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div id={`reimbErrorContainer${key}`} className="border border-danger bg-danger-subtle"></div>
+                    <Form>
+                        <Form.FloatingLabel label="Description" controlId={`reimbDescription${key}`}>
+                            {reimbursement.status == "Pending" ? <Form.Control as="textarea" className="textbox" value={reimbursement.description} onChange={getDesc} /> : <Form.Control as="textarea" className="textbox" value={reimbursement.description} disabled />}
+                        </Form.FloatingLabel>
+                        <Form.FloatingLabel label="Amount" controlId={`reimbAmount${key}`}>
+                            <Form.Control type="text" value={`$${reimbursement.amount}`} disabled />
+                        </Form.FloatingLabel>
+                        <Form.FloatingLabel label="Status" controlId={`reimbStatus${key}`}>
+                            {reimbursement.status == "Pending" ? <Form.Select aria-label="Reimbursement Status">
                                 <option value="Pending" selected>Pending</option>
                                 <option value="Approved">Approved</option>
                                 <option value="Denied">Denied</option>
-                            </select> : <select className="form-select" id={`reimbStatus${key}`}>
+                            </Form.Select> : <Form.Select aria-label="Reimbursement Status">
                                 <option value={reimbursement.status} selected disabled>{reimbursement.status}</option>
-                            </select>}
-                            <label htmlFor={`reimbStatus${key}`}>Status</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                            </Form.Select>}
+                        </Form.FloatingLabel>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>Close</Button>
+                    <Button variant="primary" onClick={updateReimbursement}>Save</Button>
+                </Modal.Footer>
+            </Modal.Dialog>
+        </Modal>
+        
     )
 }
