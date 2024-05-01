@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.revature.enums.Roles;
 import com.revature.models.User;
 import com.revature.daos.UserDAO;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserService {
 
     private UserDAO userDAO;
@@ -27,13 +29,8 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        if (!Roles.valueOf(user.getRole()).getDescription().isEmpty()) // if the specified user role is valid
-        {
-            // TODO
-            return userDAO.save(user);
-        }
-        // TODO: Throw an exception
-        return new User();
+        // TODO
+        return userDAO.save(user);
     }
 
     public User updateUser(String role, int userid) {

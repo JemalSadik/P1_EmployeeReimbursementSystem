@@ -32,6 +32,7 @@ public class UserController {
 
     @PostMapping("")
     public ResponseEntity <User> createUser(@RequestBody User user){
+        user.setRole("Employee");
         User savedUser = userService.createUser(user);
         // TODO: error handling
 
@@ -46,8 +47,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{userid}")
-    public ResponseEntity <User> deleteUser(@PathVariable int uderid) {
-        User deletedUser = userService.deleteUser(uderid);
+    public ResponseEntity <User> deleteUser(@PathVariable int userid) {
+        User deletedUser = userService.deleteUser(userid);
         // TODO: error handling
         return ResponseEntity.ok(deletedUser);
     }
