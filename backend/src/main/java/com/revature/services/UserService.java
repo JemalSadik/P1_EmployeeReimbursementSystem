@@ -2,6 +2,7 @@ package com.revature.services;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.revature.enums.Status;
 import com.revature.models.dtos.IncomingUserDto;
@@ -80,6 +81,12 @@ public class UserService {
     public User getUserById(int userid) {
         User user = userDAO.findById(userid).orElseThrow(() -> new IllegalArgumentException("No user found for ID: " + userid));
         return (user);
+    }
+
+    public Optional<User> loginUser(IncomingUserDto userDTO) throws IllegalArgumentException {
+        // TODO: validity checks
+
+        return userDAO.findByUsernameAndPassword(userDTO.getUsername(), userDTO.getPassword());
     }
 
 }
