@@ -28,11 +28,6 @@ public class ReimbursementService {
      * @return a list of all reimbursements
      */
     public List<Reimbursement> getAllReimbursements() {
-        // TODO: get logged in user
-        /* TODO: check user role
-        if user is userRole throw exception
-        if user is managerRole return list of reimbursements
-        */
         return reimbDAO.findAll();
     }
 
@@ -41,11 +36,6 @@ public class ReimbursementService {
      * @return a list of all reimbursements
      */
     public List<Reimbursement> getAllPendingReimbursement() {
-        // TODO: get logged in user
-        /* TODO: check user role
-        if user is userRole throw exception
-        if user is managerRole return list of reimbursements
-        */
         return reimbDAO.findByStatus(Status.PENDING.getDescription());
     }
 
@@ -95,11 +85,6 @@ public class ReimbursementService {
      * @throws IllegalArgumentException if no reimbursement is found ot the given reimbursement ID or if an invalid reimbursement status is given
      */
     public Reimbursement updateReimbursementStatus(int reimbId, String status) throws IllegalArgumentException {
-        // TODO: get logged in user
-        /* TODO: check user role
-        if user is userRole throw exception
-        if user is managerRole return list of reimbursements
-        */
         Reimbursement reimb = reimbDAO.findById(reimbId).orElseThrow(() -> new IllegalArgumentException("No reimbursement found for ID: " + reimbId));
         // check reimbursement status
         if (!Objects.equals(reimb.getStatus(), Status.PENDING.getDescription())) {
