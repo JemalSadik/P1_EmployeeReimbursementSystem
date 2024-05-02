@@ -51,7 +51,7 @@ public class ReimbursementController {
     }
 
     // get all reimbursements by user ID (user)
-    @GetMapping("/users")
+    @GetMapping("/user")
     public ResponseEntity<?> getAllReimbursementsByUserId(HttpSession session) {
         if (session.getAttribute("userId") == null) {
             return ResponseEntity.status(401).body("You must be logged in to see all your reimbursements");
@@ -66,7 +66,7 @@ public class ReimbursementController {
     }
 
     // get all pending reimbursements for user ID (user)
-    @GetMapping("/users/pending")
+    @GetMapping("/user/pending")
     public ResponseEntity<?> getAllPendingReimbursementsByUserId(HttpSession session) {
         if (session.getAttribute("userId") == null) {
             return ResponseEntity.status(401).body("You must be logged in to see all your pending reimbursements");
@@ -81,7 +81,7 @@ public class ReimbursementController {
     }
 
     // Create a new reimbursement for a user ID (user)
-    @PostMapping("/users")
+    @PostMapping
     public ResponseEntity<Object> createReimbursement(@RequestBody IncomingReimbursementDTO reimbursementDTO, HttpSession session) {
         if (session.getAttribute("userId") == null) {
             return ResponseEntity.status(401).body("You must be logged in to create a reimbursement");
