@@ -1,11 +1,15 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button, Form, Modal } from "react-bootstrap";
 import { ReimbursementProps } from "../../Interfaces/ReimbursementPropsInterface";
+import { useState } from "react";
 
 export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement, show, onHide}) => {
 
     let descInput: string = reimbursement.description ? reimbursement.description : "";
     let statusInput: string = reimbursement.status ? reimbursement.status : "";
+
+    const [descriptionError, setVDescriptionError] = useState("");
+    const [statusError, setStatusError] = useState("");
 
     const getDesc = (input: React.ChangeEvent<HTMLTextAreaElement>) => {
         descInput = input.target.value;
@@ -16,43 +20,27 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
     }
 
     const updateReimbursement = async () => {
-        let checkClose: boolean = false;
+        let checkClose: boolean = true;
         // TODO: add {withCredentials: true} to axios request for session support
         if (descInput !== reimbursement.description && descInput !== "") {
-            const resp = await axios.patch(`http://localhost:8080/${reimbursement.reimbId}/description`, descInput)
-                .then((resp) => checkClose = true)
-                .catch((error) => {
-                    // change checkClose to false to ensure error is displayed
+            const resp = await axios.patch(`http://localhost:8080/${reimbursement.reimbId}/description`, descInput, {withCredentials: true})
+                .then((resp: AxiosResponse) => {
+                    console.log(resp.data);
+                })
+                .catch((error: AxiosError) => {
                     checkClose = false;
-
-                    const errorContainer = document.getElementById(`reimbErrorContainer${reimbursement.reimbId}`);
-                    
-                    if (errorContainer) {
-                        let errorEl = document.createElement('p');
-                        errorEl.innerHTML = error;
-                        errorContainer.appendChild(errorEl);
-                    } else {
-                        alert(error);
-                    }
+                    setVDescriptionError(error.message);
                 });
         }
         // TODO: check if user role is manager first before sending request to update status
         if (statusInput !== reimbursement.status && statusInput !== "") {
-            const resp = await axios.patch(`http://localhost:8080/${reimbursement.reimbId}/status`, statusInput)
-                .then((resp) => checkClose = true)
-                .catch((error) => {
-                    // change checkClose to false to ensure error is displayed
+            const resp = await axios.patch(`http://localhost:8080/${reimbursement.reimbId}/status`, statusInput, {withCredentials: true})
+                .then((resp: AxiosResponse) => {
+                    console.log(resp.data);
+                })
+                .catch((error: AxiosError) => {
                     checkClose = false;
-
-                    const errorContainer = document.getElementById(`reimbErrorContainer${reimbursement.reimbId}`);
-                    
-                    if (errorContainer) {
-                        let errorEl = document.createElement('p');
-                        errorEl.innerHTML = error;
-                        errorContainer.appendChild(errorEl);
-                    } else {
-                        alert(error);
-                    }
+                    setStatusError(error.message);
                 });
         }
         if (checkClose) {
@@ -71,21 +59,29 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
                 <Modal.Body>
                     <div id={`reimbErrorContainer${reimbursement.reimbId}`} className="border border-danger bg-danger-subtle"></div>
                     <Form>
-                        <Form.FloatingLabel label="Description" controlId={`reimbDescription${reimbursement.reimbId}`}>
-                            {reimbursement.status == "Pending" ? <Form.Control as="textarea" className="textbox" value={reimbursement.description} onChange={getDesc} /> : <Form.Control as="textarea" className="textbox" value={reimbursement.description} disabled />}
-                        </Form.FloatingLabel>
-                        <Form.FloatingLabel label="Amount" controlId={`reimbAmount${reimbursement.reimbId}`}>
-                            <Form.Control type="text" value={`$${reimbursement.amount}`} disabled />
-                        </Form.FloatingLabel>
-                        <Form.FloatingLabel label="Status" controlId={`reimbStatus${reimbursement.reimbId}`}>
-                            {reimbursement.status == "Pending" ? <Form.Select aria-label="Reimbursement Status" onChange={getStatus}>
-                                <option value="Pending" selected>Pending</option>
-                                <option value="Approved">Approved</option>
-                                <option value="Denied">Denied</option>
-                            </Form.Select> : <Form.Select aria-label="Reimbursement Status">
-                                <option value={reimbursement.status} selected disabled>{reimbursement.status}</option>
-                            </Form.Select>}
-                        </Form.FloatingLabel>
+                        <Form.Group>
+                            <Form.FloatingLabel label="Description" controlId={`reimbDescription${reimbursement.reimbId}`}>
+                                {reimbursement.status == "Pending" ? <Form.Control as="textarea" className="textbox" value={reimbursement.description} onChange={getDesc} /> : <Form.Control as="textarea" className="textbox" value={reimbursement.description} disabled />}
+                                <Form.Control.Feedback type="invalid">{descriptionError}</Form.Control.Feedback>
+                            </Form.FloatingLabel>
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.FloatingLabel label="Amount" controlId={`reimbAmount${reimbursement.reimbId}`}>
+                                <Form.Control type="text" value={`$${reimbursement.amount}`} disabled />
+                            </Form.FloatingLabel>
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.FloatingLabel label="Status" controlId={`reimbStatus${reimbursement.reimbId}`}>
+                                {reimbursement.status == "Pending" ? <Form.Select aria-label="Reimbursement Status" onChange={getStatus}>
+                                    <option value="Pending" selected>Pending</option>
+                                    <option value="Approved">Approved</option>
+                                    <option value="Denied">Denied</option>
+                                </Form.Select> : <Form.Select aria-label="Reimbursement Status">
+                                    <option value={reimbursement.status} selected disabled>{reimbursement.status}</option>
+                                </Form.Select>}
+                                <Form.Control.Feedback type="invalid">{statusError}</Form.Control.Feedback>
+                            </Form.FloatingLabel>
+                        </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
