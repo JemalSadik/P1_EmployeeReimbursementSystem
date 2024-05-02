@@ -2,8 +2,12 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { Button, Form, Modal } from "react-bootstrap";
 import { ReimbursementProps } from "../../Interfaces/ReimbursementPropsInterface";
 import { useState } from "react";
+import { UserInterface } from "../../Interfaces/UserInterface";
 
 export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement, show, onHide}) => {
+
+    const user: UserInterface = JSON.parse(localStorage.getItem("userId")||"");
+    const baseUrl: string|null = localStorage.getItem("baseUrl");
 
     let descInput: string = reimbursement.description ? reimbursement.description : "";
     let statusInput: string = reimbursement.status ? reimbursement.status : "";
@@ -23,7 +27,7 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
         let checkClose: boolean = true;
         // TODO: add {withCredentials: true} to axios request for session support
         if (descInput !== reimbursement.description && descInput !== "") {
-            const resp = await axios.patch(`http://localhost:8080/${reimbursement.reimbId}/description`, descInput, {withCredentials: true})
+            const resp = await axios.patch(baseUrl + `/${reimbursement.reimbId}/description`, descInput, {withCredentials: true})
                 .then((resp: AxiosResponse) => {
                     console.log(resp.data);
                 })
@@ -34,7 +38,7 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
         }
         // TODO: check if user role is manager first before sending request to update status
         if (statusInput !== reimbursement.status && statusInput !== "") {
-            const resp = await axios.patch(`http://localhost:8080/${reimbursement.reimbId}/status`, statusInput, {withCredentials: true})
+            const resp = await axios.patch(baseUrl + `/${reimbursement.reimbId}/status`, statusInput, {withCredentials: true})
                 .then((resp: AxiosResponse) => {
                     console.log(resp.data);
                 })
