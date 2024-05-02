@@ -5,17 +5,22 @@ public class IncomingUserDto {
 
     private String lastname;
 
-    private String Password;
+    private String password;
 
     private String username;
 
     public IncomingUserDto() {
     }
 
+    public IncomingUserDto(String password, String username) {
+        this.password = password;
+        this.username = username;
+    }
+
     public IncomingUserDto(String firstname, String lastname, String password, String username) {
         this.firstname = firstname;
         this.lastname = lastname;
-        Password = password;
+        this.password = password;
         this.username = username;
     }
 
@@ -28,7 +33,7 @@ public class IncomingUserDto {
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public String getUsername() {
@@ -44,7 +49,7 @@ public class IncomingUserDto {
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 
     public void setUsername(String username) {
@@ -56,7 +61,7 @@ public class IncomingUserDto {
         return "IncomingUserDto{" +
                 "firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
-                ", Password='" + Password + '\'' +
+                ", password='" + password + '\'' +
                 ", username='" + username + '\'' +
                 '}';
     }
