@@ -22,7 +22,7 @@ export const Login: React.FC = () => {
             setSuccessfullyRegistered(true);
             localStorage.removeItem("hasRegistered");
         }
-    });
+    }, []);
 
     const storeValues = (input: React.ChangeEvent<HTMLInputElement>) => {
         if (input.target.name === "username") {
