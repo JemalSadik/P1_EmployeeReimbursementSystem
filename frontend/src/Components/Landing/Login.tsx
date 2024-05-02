@@ -38,7 +38,7 @@ export const Login: React.FC = () => {
 
     const login = async () => {
         // TODO: validate username and password
-        const resp = await axios.post(baseUrl + "/users/login", user, {withCredentials: true})
+        const resp = await axios.post(baseUrl + "/login", user, {withCredentials: true})
         .then((resp) => {
             localStorage.setItem("user", JSON.stringify(resp.data));
             navigate("/dashboard");

@@ -15,12 +15,12 @@ export const Dashboard: React.FC = () => {
     const [selectedReimbursement, setSelectedReimbursement] = useState<ReimbursementInterface|null>(null);
 
     const getAllReimbursementsByUserId = async () => {
-        const resp = await axios.get(baseUrl + `/reimbursements/users/${user.userId||1}`||"");
+        const resp = await axios.get(baseUrl + `/reimbursements/user`||"");
         setReimbursements(resp.data);
     }
 
     const getAllPendingReimbursementsByUserId = async () => {
-        const resp = await axios.get(baseUrl + `/reimbursements/users/${user.userId||1}/pending`||"");
+        const resp = await axios.get(baseUrl + `/reimbursements/user/pending`||"");
         setReimbursements(resp.data);
     }
 
