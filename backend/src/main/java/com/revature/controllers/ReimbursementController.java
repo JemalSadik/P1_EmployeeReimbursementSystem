@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/reimbursements")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class ReimbursementController {
 
     private ReimbursementService reimbService;
@@ -28,11 +28,11 @@ public class ReimbursementController {
         if (session.getAttribute("userId") == null) {
             return ResponseEntity.status(401).body("You must be logged in to see all reimbursements");
         }
-        List<Reimbursement> reimbursements = reimbService.getAllReimbursements();
         String role = (String) session.getAttribute("role");
         if (!role.equalsIgnoreCase("Manager")) {
             return ResponseEntity.status(403).body("You must be a MANAGER to see all reimbursements");
         }
+        List<Reimbursement> reimbursements = reimbService.getAllReimbursements();
         return ResponseEntity.ok(reimbursements);
     }
 
