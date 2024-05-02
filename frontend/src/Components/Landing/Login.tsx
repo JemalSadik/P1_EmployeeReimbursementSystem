@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useState } from "react";
-import { Button, Container, FloatingLabel, Form, InputGroup } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Alert, Button, Container, FloatingLabel, Form, InputGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 export const Login: React.FC = () => {
@@ -14,6 +14,15 @@ export const Login: React.FC = () => {
         password: ""
     });
     const [passwordIsVisible, setPasswordIsVisible] = useState(false);
+    const [successfullyRegistered, setSuccessfullyRegistered] = useState(false);
+
+    useEffect(() => {
+        const hasRegistered = localStorage.getItem("hasRegistered");
+        if (hasRegistered) {
+            setSuccessfullyRegistered(true);
+            localStorage.removeItem("hasRegistered");
+        }
+    });
 
     const storeValues = (input: React.ChangeEvent<HTMLInputElement>) => {
         if (input.target.name === "username") {
@@ -60,11 +69,17 @@ export const Login: React.FC = () => {
                             </Button>
                         </InputGroup>
                     </Form.Group>
-                    <div>
-                        <Button type="button" variant="primary" className="mx-3" onClick={login}>Login</Button>
-                        <Button type="button" variant="secondary" onClick={() => navigate("/register")}>Register</Button>
-                    </div>
                 </Form>
+                <div>
+                    <Button type="button" variant="primary" className="mx-3" onClick={login}>Login</Button>
+                    <Button type="button" variant="secondary" onClick={() => navigate("/register")}>Register</Button>
+                </div>
+                {successfullyRegistered && (
+                    <Alert variant="success">
+                        <h3>Success!</h3>
+                        <p>You have successfully registered an account</p>
+                    </Alert>
+                )}
             </Container>
         </Container>
     )
