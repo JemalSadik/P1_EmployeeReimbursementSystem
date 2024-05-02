@@ -7,7 +7,7 @@ import { UserInterface } from "../../Interfaces/UserInterface";
 
 export const Dashboard: React.FC = () => {
 
-    const user: UserInterface = JSON.parse(localStorage.getItem("userId")||"");
+    const user: UserInterface = JSON.parse(localStorage.getItem("user")||"");
     const baseUrl: string|null = localStorage.getItem("baseUrl");
 
     const [reimbursements, setReimbursements] = useState<Array<ReimbursementInterface>>([]);
