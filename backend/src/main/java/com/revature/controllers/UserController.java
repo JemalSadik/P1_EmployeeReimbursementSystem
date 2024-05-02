@@ -3,7 +3,7 @@ package com.revature.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.revature.models.dtos.IncomingUserDto;
 import java.util.List;
 import com.revature.models.User;
 import com.revature.services.UserService;
@@ -21,36 +21,49 @@ public class UserController {
     }
 
     // get all users (manager)
-    @GetMapping("")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-
-        // TODO: check if list is empty and return appropriate message
-
-        return ResponseEntity.ok(users);
+    @GetMapping
+    public ResponseEntity<?> getAllUsers() {
+        try {
+            return ResponseEntity.ok(userService.getAllUsers());
+        }catch (Exception e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 
-    @PostMapping("")
-    public ResponseEntity <User> createUser(@RequestBody User user){
-        user.setRole("Employee");
-        User savedUser = userService.createUser(user);
-        // TODO: error handling
-
-        return ResponseEntity.ok(savedUser);
+    @PostMapping
+    public ResponseEntity <?> createUser(@RequestBody IncomingUserDto userDTO){
+        try {
+            return ResponseEntity.ok(userService.createUser(userDTO));
+        }catch (Exception e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 
     @PatchMapping("/{userid}")
-    public ResponseEntity <User> updateUser(@RequestBody String role, @PathVariable int userid){
-        User savedUser = userService.updateUser(role, userid);
-        // TODO: error handling
-        return ResponseEntity.ok(savedUser);
+    public ResponseEntity <?> updateUser(@RequestBody String role, @PathVariable int userid){
+        try {
+            return ResponseEntity.ok(userService.updateUser(role, userid));
+        }catch (Exception e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{userid}")
-    public ResponseEntity <User> deleteUser(@PathVariable int userid) {
-        User deletedUser = userService.deleteUser(userid);
-        // TODO: error handling
-        return ResponseEntity.ok(deletedUser);
+    public ResponseEntity <?> deleteUser(@PathVariable int userid) {
+        try {
+            return ResponseEntity.ok(userService.deleteUser(userid));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{userid}")
+    public ResponseEntity <?> getUserById(@PathVariable int userid) {
+        try {
+            return ResponseEntity.ok(userService.getUserById(userid));
+        } catch (Exception e){
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 
 }

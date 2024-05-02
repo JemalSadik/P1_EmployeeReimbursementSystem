@@ -35,13 +35,11 @@ public class User {
     public User() {
     }
 
-    public User(int userId, String firstname, String lastname, String username, String password, String role) {
-        this.userId = userId;
+    public User(String firstname, String lastname, String username, String password) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.username = username;
         this.password = password;
-        this.role = role;
     }
 
     public int getUserId() {
