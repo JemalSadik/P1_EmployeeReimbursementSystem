@@ -4,6 +4,7 @@ import { Reimbursement } from "../Reimbursement/Reimbursement";
 import { ReimbursementInterface } from "../../Interfaces/ReimbursementInterface";
 import axios from "axios";
 import { UserInterface } from "../../Interfaces/UserInterface";
+import {User} from "../User/User";
 
 export const Dashboard: React.FC = () => {
 
@@ -14,6 +15,11 @@ export const Dashboard: React.FC = () => {
     const [showModal, setShowModal] = useState<boolean>(false);
     const [selectedReimbursement, setSelectedReimbursement] = useState<ReimbursementInterface|null>(null);
 
+    // The following state variables are used for User Account user stories
+    const [users, setUsers] = useState<Array<UserInterface>>([]);
+    const [showUserModal, setUserShowModal] = useState<boolean>(false);
+    const [selectedUser, setSelectedUser] = useState<UserInterface|null>(null);
+
     const getAllReimbursementsByUserId = async () => {
         const resp = await axios.get(baseUrl + `/reimbursements/user`, {withCredentials: true});
         setReimbursements(resp.data);
@@ -22,6 +28,17 @@ export const Dashboard: React.FC = () => {
     const getAllPendingReimbursementsByUserId = async () => {
         const resp = await axios.get(baseUrl + `/reimbursements/user/pending`, {withCredentials: true});
         setReimbursements(resp.data);
+    }
+
+    // The following functions are used for User Account user stories
+    const getAllUsers = async () => {
+        const resp = await axios.get(baseUrl + `/users`, {withCredentials: true});
+        setUsers(resp.data);
+    }
+
+    const getUserByUserId = async () => {
+        const resp = await axios.get(baseUrl + `/users/userid`, {withCredentials: true});
+        setUsers(resp.data);
     }
 
     useEffect(() => {
@@ -36,6 +53,16 @@ export const Dashboard: React.FC = () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
+    }
+
+    // For Uses
+    const handleUserShowModal = (user: UserInterface) => {
+        setSelectedUser(user);
+        setUserShowModal(true);
+    };
+
+    const handleUserCloseModal = () => {
+        setUserShowModal(false);
     }
 
     return (
@@ -84,9 +111,21 @@ export const Dashboard: React.FC = () => {
                         )}
                     </tbody>
                 </Table>
-                <Table id="users-table">
-
-                </Table>
+                <Table id="user-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Fistname</th>
+                            <th>Lastname</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map((user) => 
+                            <User key={user.userId} {...user} showModal={handleUserShowModal} onHide={handleUserCloseModal} />
+                        )}
+                    </tbody>
+                </Table> 
             </Container>
         </Container>
     )
