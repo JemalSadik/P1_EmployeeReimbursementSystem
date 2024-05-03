@@ -35,7 +35,7 @@ public class AuthenticationController {
         session.setAttribute("username", user.getUsername());
         session.setAttribute("role", user.getRole());
 
-        return ResponseEntity.ok(new OutgoingUserDTO(user.getUserId(), user.getUsername(), user.getRole(), user.getUserId()));
+        return ResponseEntity.ok(new OutgoingUserDTO(user.getUsername(), user.getFirstname(), user.getLastname(), user.getRole(), user.getUserId()));
     }
 
     @PostMapping("/logout")

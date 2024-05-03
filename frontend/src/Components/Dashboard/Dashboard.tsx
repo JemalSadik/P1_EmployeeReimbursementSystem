@@ -7,12 +7,14 @@ import { UserInterface } from "../../Interfaces/UserInterface";
 import { ModalCreateReimbursement } from "../Reimbursement/ModalCreateReimbursement";
 import { ModalReimbursement } from "../Reimbursement/ModalReimbursement";
 import {User} from "../User/User";
+import { UserModal } from "../User/UserModal";
 
 export const Dashboard: React.FC = () => {
 
     const user: UserInterface = JSON.parse(localStorage.getItem("user")||"");
     const baseUrl: string|null = localStorage.getItem("baseUrl");
 
+    const [type, setType] = useState("Reimbursements");
     const [reimbursements, setReimbursements] = useState<Array<ReimbursementInterface>>([]);
     const [showReimbursementModal, setShowReimbursementModal] = useState<boolean>(false);
     const [selectedReimbursement, setSelectedReimbursement] = useState<ReimbursementInterface>({
@@ -24,7 +26,15 @@ export const Dashboard: React.FC = () => {
     // The following state variables are used for User Account user stories
     const [users, setUsers] = useState<Array<UserInterface>>([]);
     const [showUserModal, setUserShowModal] = useState<boolean>(false);
-    const [selectedUser, setSelectedUser] = useState<UserInterface|null>(null);
+    const [selectedUser, setSelectedUser] = useState<UserInterface>({
+        role: "",
+        userId: 0,
+        username: ""
+    });
+
+    const getType = (input: React.ChangeEvent<HTMLInputElement>) => {
+        setType(input.target.value);
+    }
 
     const getAllReimbursementsByUserId = async () => {
         const resp = await axios.get(baseUrl + `/reimbursements/user`, {withCredentials: true});
@@ -49,6 +59,7 @@ export const Dashboard: React.FC = () => {
     useEffect(() => {
         // TODO: get all reimbursements
         getAllReimbursementsByUserId();
+        getAllUsers();
     }, []);
 
     const handleShowReimbursementModal = (reimbursement: ReimbursementInterface) => {
@@ -84,7 +95,7 @@ export const Dashboard: React.FC = () => {
                         <Col md="6">
                             <Form.Group>
                                 <Form.Label>Select View</Form.Label>
-                                <Form.Select className="border border-2">
+                                {type === "Reimbursements" ? <Form.Select id="selctReimbursementsView" className="border border-2">
                                     <option value="myReimbursements">My Reimbursements</option>
                                     <option value="myPending">My Pending Reimbursements</option>
                                     {user.role.toLowerCase() === "manager" && (
@@ -93,27 +104,32 @@ export const Dashboard: React.FC = () => {
                                             <option value="allPending">All Pending Reimbursements</option>
                                         </>
                                     )}
-                                </Form.Select>
+                                </Form.Select> : <Form.Select id="selectUsersView" className="border border-2" disabled>
+                                    <option value="allUsers">All Users</option>
+                                </Form.Select>}                                
                             </Form.Group>
                         </Col>
                         <Col md="3">
                             <Form.Group>
                                 <Form.Label>Select Type</Form.Label>
                                 <div>
-                                    <Form.Check inline label="Reimbursements" name="selectTypeGroup" type="radio" id="selectReimbursement" checked/>
-                                    {user.role.toLowerCase() === "manager" ? <Form.Check inline label="Users" name="selectTypeGroup" type="radio" id="selectUsers" /> : <Form.Check inline label="Users" name="selectTypeGroup" type="radio" id="selectUsers" disabled/>}
+                                    {type === "Reimbursements" ? <Form.Check inline label="Reimbursements" name="selectTypeGroup" type="radio" id="selectReimbursement" value="Reimbursements" onChange={getType} checked /> : <Form.Check inline label="Reimbursements" name="selectTypeGroup" type="radio" id="selectReimbursement" value="Reimbursements" onChange={getType} />}
+                                    {user.role.toLowerCase() === "manager" ? <Form.Check inline label="Users" name="selectTypeGroup" type="radio" id="selectUsers" value="Users" onChange={getType} /> : <Form.Check inline label="Users" name="selectTypeGroup" type="radio" id="selectUsers" disabled/>}
                                 </div>
                             </Form.Group>
                         </Col>
                         <Col md="3" className="d-flex align-items-center">
-                            <Button type="button" variant="primary" onClick={handleShowCreateReimbursementModal}>
+                            {type === "Reimbursements" ? <Button type="button" variant="primary" onClick={handleShowCreateReimbursementModal}>
                                 <i className="bi bi-plus-lg me-2"></i>
                                 Create
-                            </Button>
+                            </Button> : <Button type="button" variant="secondary" onClick={handleShowCreateReimbursementModal} disabled>
+                                <i className="bi bi-plus-lg me-2"></i>
+                                Create
+                            </Button>}
                         </Col>
                     </Row>
                 </Form>
-                <Table id="reimbursement-table" className="mt-3" striped hover>
+                {type === "Reimbursements" ? <Table id="reimbursement-table" className="mt-3" striped hover>
                     <thead>
                         <tr>
                             <th>#</th>
@@ -127,24 +143,25 @@ export const Dashboard: React.FC = () => {
                             <Reimbursement key={reimbursement.reimbId} reimbursement={reimbursement} showModal={() => handleShowReimbursementModal(reimbursement)} />
                         )}
                     </tbody>
-                </Table>
-                <Table id="user-table">
+                </Table> : <Table id="user-table">
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Fistname</th>
                             <th>Lastname</th>
                             <th>Role</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map((user) => 
-                            <User key={user.userId} {...user} showModal={handleUserShowModal} onHide={handleUserCloseModal} />
+                            <User key={user.userId} user={user} showModal={() => handleUserShowModal(user)} />
                         )}
                     </tbody>
-                </Table> 
+                </Table>}
                 <ModalCreateReimbursement show={showCreateReimbursementModal} onHide={handleCloseCreateReimbursementModal}/>
                 <ModalReimbursement reimbursement={selectedReimbursement} show={showReimbursementModal} onHide={handleCloseReimbursementModal}/>
+                <UserModal usr={selectedUser} show={showUserModal} onHide={handleUserCloseModal}/>
             </Container>
         </Container>
     )

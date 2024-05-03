@@ -12,8 +12,6 @@ public class OutgoingUserDTO {
 
     private String role;
 
-    private int userid;
-
     public OutgoingUserDTO() {
     }
 
@@ -23,12 +21,12 @@ public class OutgoingUserDTO {
         this.username = username;
     }
 
-    public OutgoingUserDTO(String username, String firstname, String lastname, String role, int userid) {
+    public OutgoingUserDTO(String username, String firstname, String lastname, String role, int userId) {
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
         this.role = role;
-        this.userid = userid;
+        this.userId = userId;
     }
 
     public int getUserId() {

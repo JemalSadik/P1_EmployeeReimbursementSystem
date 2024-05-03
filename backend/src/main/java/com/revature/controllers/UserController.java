@@ -1,7 +1,9 @@
 package com.revature.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.revature.models.dtos.IncomingUserDto;
@@ -68,8 +70,8 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/{userid}")
-    public ResponseEntity <Object> updateUser(@RequestBody String role, HttpSession session){
+    @PatchMapping("/{userId}")
+    public ResponseEntity <Object> updateUser(/*@RequestBody String role,*/ @PathVariable int userId, HttpSession session, HttpServletRequest request){
 
         if (session.getAttribute("userId") == null) {
             return ResponseEntity.status(401).body("You must be logged in to update a user account");
@@ -79,13 +81,11 @@ public class UserController {
         if (!LoggedInRole.equalsIgnoreCase("Manager")) {
             return ResponseEntity.status(403).body("You must be a MANAGER to update  a user account");
         }
-
-        int userid = (int) session.getAttribute("userId");
-
+        String role = "";
         try {
-            return ResponseEntity.ok(userService.updateUser(role, userid));
+            return ResponseEntity.ok(userService.updateUser(role, userId));
         }catch (Exception e) {
-            return ResponseEntity.status(400).body(e.getMessage());
+            return ResponseEntity.status(400).body("Update failed");
         }
     }
 
