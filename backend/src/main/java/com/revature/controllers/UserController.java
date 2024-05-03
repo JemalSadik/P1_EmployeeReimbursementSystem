@@ -71,7 +71,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity <Object> updateUser(/*@RequestBody String role,*/ @PathVariable int userId, HttpSession session, HttpServletRequest request){
+    public ResponseEntity <Object> updateUser(@RequestBody String role, @PathVariable int userId, HttpSession session){
 
         if (session.getAttribute("userId") == null) {
             return ResponseEntity.status(401).body("You must be logged in to update a user account");
@@ -81,7 +81,7 @@ public class UserController {
         if (!LoggedInRole.equalsIgnoreCase("Manager")) {
             return ResponseEntity.status(403).body("You must be a MANAGER to update  a user account");
         }
-        String role = "";
+        //String role = "Manager";
         try {
             return ResponseEntity.ok(userService.updateUser(role, userId));
         }catch (Exception e) {
