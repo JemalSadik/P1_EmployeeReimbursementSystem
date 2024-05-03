@@ -75,7 +75,7 @@ export const Login: React.FC = () => {
                     <Button type="button" variant="secondary" onClick={() => navigate("/register")}>Register</Button>
                 </div>
                 {successfullyRegistered && (
-                    <Alert variant="success">
+                    <Alert variant="success" className="mt-3">
                         <h3>Success!</h3>
                         <p>You have successfully registered an account</p>
                     </Alert>

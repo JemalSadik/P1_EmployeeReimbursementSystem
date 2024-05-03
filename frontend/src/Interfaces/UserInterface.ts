@@ -1,6 +1,7 @@
 export interface UserInterface {
-    userId?: number,
+    userId: number,
     username: string,
     firstname?: string,
-    lastname?: string
+    lastname?: string,
+    role: string
 }

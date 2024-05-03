@@ -27,7 +27,7 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
         let checkClose: boolean = true;
         // TODO: add {withCredentials: true} to axios request for session support
         if (descInput !== reimbursement.description && descInput !== "") {
-            const resp = await axios.patch(baseUrl + `/${reimbursement.reimbId}/description`, descInput, {withCredentials: true})
+            const resp = await axios.patch(baseUrl + `/reimbursements/${reimbursement.reimbId}/description`, descInput, {withCredentials: true})
                 .then((resp: AxiosResponse) => {
                     console.log(resp.data);
                 })
@@ -38,7 +38,7 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
         }
         // TODO: check if user role is manager first before sending request to update status
         if (statusInput !== reimbursement.status && statusInput !== "") {
-            const resp = await axios.patch(baseUrl + `/${reimbursement.reimbId}/status`, statusInput, {withCredentials: true})
+            const resp = await axios.patch(baseUrl + `/reimbursements/${reimbursement.reimbId}/status`, statusInput, {withCredentials: true})
                 .then((resp: AxiosResponse) => {
                     console.log(resp.data);
                 })
