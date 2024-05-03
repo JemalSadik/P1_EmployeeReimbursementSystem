@@ -5,7 +5,7 @@ export const Reimbursement: React.FC<{reimbursement: ReimbursementInterface, sho
     console.log("reimbursements", showModal);
 
     return (
-        <tr onClick={showModal}>
+        <tr onDoubleClick={showModal}>
             <th>{reimbursement.reimbId}</th>
             <td>{reimbursement.description}</td>
             <td>{reimbursement.amount}</td>

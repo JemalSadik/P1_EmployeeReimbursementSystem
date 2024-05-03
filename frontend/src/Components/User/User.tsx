@@ -16,7 +16,7 @@ export const User: React.FC<{user: UserInterface, showModal: () => void}> = ({us
     
 
     return (
-        <tr onClick={showModal}>
+        <tr onDoubleClick={showModal}>
             <th>{user.userId}</th>
             <td>{user.firstname}</td>
             <td>{user.lastname}</td>

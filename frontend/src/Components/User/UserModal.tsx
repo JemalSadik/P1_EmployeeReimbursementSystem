@@ -40,7 +40,9 @@ export const UserModal: React.FC<{usr: UserInterface, show: boolean, onHide: () 
     const updateuser = async () => {
         console.log(roleInput);
         
-        const resp = await axios.patch(baseUrl + `/users/${usr.userId}`, roleInput, {withCredentials: true})
+        const resp = await axios.patch(baseUrl + `/users/${usr.userId}`, roleInput, {withCredentials: true, headers: {
+            "Content-Type": "text/plain"
+        }})
         .then((resp: AxiosResponse) => {
             localStorage.setItem("hasUpdated", "true");
             onHide();

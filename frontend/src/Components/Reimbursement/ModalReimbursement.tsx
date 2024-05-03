@@ -26,7 +26,9 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
         let checkClose: boolean = true;
         // TODO: add {withCredentials: true} to axios request for session support
         if (descInput !== reimbursement.description && descInput !== "") {
-            const resp = await axios.patch(baseUrl + `/reimbursements/${reimbursement.reimbId}/description`, descInput, {withCredentials: true})
+            const resp = await axios.patch(baseUrl + `/reimbursements/${reimbursement.reimbId}/description`, descInput, {withCredentials: true, headers: {
+                "Content-Type": "text/plain"
+            }})
                 .then((resp: AxiosResponse) => {
                     console.log(resp.data);
                 })
@@ -37,7 +39,9 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
         }
         // TODO: check if user role is manager first before sending request to update status
         if (statusInput !== reimbursement.status && statusInput !== "") {
-            const resp = await axios.patch(baseUrl + `/reimbursements/${reimbursement.reimbId}/status`, statusInput, {withCredentials: true})
+            const resp = await axios.patch(baseUrl + `/reimbursements/${reimbursement.reimbId}/status`, statusInput, {withCredentials: true, headers: {
+                "Content-Type": "text/plain"
+            }})
                 .then((resp: AxiosResponse) => {
                     console.log(resp.data);
                 })
@@ -64,7 +68,7 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
                 <Form noValidate validated={validated}>
                     <Form.Group className="mb-3">
                         <Form.FloatingLabel label="Description" controlId={`reimbDescription${reimbursement.reimbId}`}>
-                            {reimbursement.status == "Pending" ? <Form.Control as="textarea" className="textbox" value={reimbursement.description} onChange={getDesc} /> : <Form.Control as="textarea" className="textbox" value={reimbursement.description} disabled />}
+                            {reimbursement.status == "Pending" ? <Form.Control as="textarea" className="textbox" defaultValue={reimbursement.description} onChange={getDesc} /> : <Form.Control as="textarea" className="textbox" value={reimbursement.description} disabled />}
                             <Form.Control.Feedback type="invalid">{descriptionError}</Form.Control.Feedback>
                         </Form.FloatingLabel>
                     </Form.Group>

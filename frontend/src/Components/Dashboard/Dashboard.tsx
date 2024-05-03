@@ -34,7 +34,7 @@ export const Dashboard: React.FC = () => {
 
     const getType = (input: React.ChangeEvent<HTMLInputElement>) => {
         setType(input.target.value);
-    }
+    };
 
     const getAllReimbursementsByUserId = async () => {
         const resp = await axios.get(baseUrl + `/reimbursements/user`, {withCredentials: true});
@@ -42,6 +42,14 @@ export const Dashboard: React.FC = () => {
     };
     const getAllPendingReimbursementsByUserId = async () => {
         const resp = await axios.get(baseUrl + `/reimbursements/user/pending`, {withCredentials: true});
+        setReimbursements(resp.data);
+    };
+    const getAllReimbursements = async () => {
+        const resp = await axios.get(baseUrl + "/reimbursements", {withCredentials: true});
+        setReimbursements(resp.data);
+    };
+    const getAllPendingReimbursements = async () => {
+        const resp = await axios.get(baseUrl + "/reimbursements/pending", {withCredentials: true})
         setReimbursements(resp.data);
     };
 
@@ -59,9 +67,39 @@ export const Dashboard: React.FC = () => {
     useEffect(() => {
         // TODO: get all reimbursements
         getAllReimbursementsByUserId();
-        getAllUsers();
+        if (user.role.toLowerCase() === "manager") {
+            getAllUsers();
+        }
     }, []);
 
+    const handleViewOnChange = (input: React.ChangeEvent<HTMLSelectElement>) => {
+        const view: string = input.target.value;
+        switch (view) {
+            case "myReimbursements":
+                getAllReimbursementsByUserId();
+                return;
+            case "myPending":
+                getAllPendingReimbursementsByUserId();
+                return;
+            case "allReimbursements":
+                if (user.role.toLowerCase() !== "manager") {
+                    alert("You must be a MANAGER to view all reimbursements");
+                    return;
+                }
+                getAllReimbursements();
+                return;
+            case "allPending":
+                if (user.role.toLowerCase() !== "manager") {
+                    alert("You must be a MANAGER to view all pending reimbursements");
+                    return;
+                }
+                getAllPendingReimbursements();
+                return;
+            default:
+                alert("Invalid view type!")
+                return;
+        }
+    }
     const handleShowReimbursementModal = (reimbursement: ReimbursementInterface) => {
         setSelectedReimbursement(reimbursement);
         setShowReimbursementModal(true);
@@ -95,7 +133,7 @@ export const Dashboard: React.FC = () => {
                         <Col md="6">
                             <Form.Group>
                                 <Form.Label>Select View</Form.Label>
-                                {type === "Reimbursements" ? <Form.Select id="selctReimbursementsView" className="border border-2">
+                                {type === "Reimbursements" ? <Form.Select id="selctReimbursementsView" className="border border-2" onChange={handleViewOnChange}>
                                     <option value="myReimbursements">My Reimbursements</option>
                                     <option value="myPending">My Pending Reimbursements</option>
                                     {user.role.toLowerCase() === "manager" && (
@@ -143,7 +181,7 @@ export const Dashboard: React.FC = () => {
                             <Reimbursement key={reimbursement.reimbId} reimbursement={reimbursement} showModal={() => handleShowReimbursementModal(reimbursement)} />
                         )}
                     </tbody>
-                </Table> : <Table id="user-table">
+                </Table> : <Table id="user-table" className="mt-3" striped hover>
                     <thead>
                         <tr>
                             <th>#</th>
@@ -153,7 +191,7 @@ export const Dashboard: React.FC = () => {
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="table-group-divider">
                         {users.map((user) => 
                             <User key={user.userId} user={user} showModal={() => handleUserShowModal(user)} />
                         )}
