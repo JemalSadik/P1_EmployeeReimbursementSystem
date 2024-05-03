@@ -2,6 +2,8 @@ package com.revature.models.dtos;
 
 public class OutgoingUserDTO {
 
+    private int userId;
+
     private String username;
 
     private String firstname;
@@ -13,11 +15,25 @@ public class OutgoingUserDTO {
     public OutgoingUserDTO() {
     }
 
+    public OutgoingUserDTO(int userId, String role, String username) {
+        this.userId = userId;
+        this.role = role;
+        this.username = username;
+    }
+
     public OutgoingUserDTO(String username, String firstname, String lastname, String role) {
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
         this.role = role;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
