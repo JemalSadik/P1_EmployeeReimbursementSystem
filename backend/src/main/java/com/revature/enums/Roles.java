@@ -3,7 +3,7 @@ package com.revature.enums;
 public enum Roles {
 
     MANAGER("Manager", 1),
-    USER("User", 2);
+    EMPLOYEE("Employee", 2);
 
     private final String description;
     private final int level;
@@ -28,4 +28,19 @@ public enum Roles {
                 ", level=" + level +
                 '}';
     }
+
+    /**
+     *
+     * @param role the Role to format
+     * @return the role enum description of the passed role
+     * @throws IllegalArgumentException if the role is not a valid role
+     */
+    public static String formatRole(String role) throws IllegalArgumentException {
+        return switch (role) {
+            case "manager" -> MANAGER.getDescription();
+            case "employee" -> EMPLOYEE.getDescription();
+            default -> throw new IllegalArgumentException("invalid role");
+        };
+    }
+
 }

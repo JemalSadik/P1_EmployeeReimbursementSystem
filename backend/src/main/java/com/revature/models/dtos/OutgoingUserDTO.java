@@ -10,14 +10,17 @@ public class OutgoingUserDTO {
 
     private String role;
 
+    private int userid;
+
     public OutgoingUserDTO() {
     }
 
-    public OutgoingUserDTO(String username, String firstname, String lastname, String role) {
+    public OutgoingUserDTO(String username, String firstname, String lastname, String role, int userid) {
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
         this.role = role;
+        this.userid = userid;
     }
 
     public String getUsername() {

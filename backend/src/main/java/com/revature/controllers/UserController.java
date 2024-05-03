@@ -1,5 +1,6 @@
 package com.revature.controllers;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +21,17 @@ public class UserController {
        this.userService = userService;
     }
 
-    // get all users (manager)
     @GetMapping
-    public ResponseEntity<?> getAllUsers() {
+    public ResponseEntity<?> getAllUsers(HttpSession session) {
+        if (session.getAttribute("userId") == null) {
+            return ResponseEntity.status(401).body("You must be logged in to update a user account");
+        }
+        String LoggedInRole = (String) session.getAttribute("role");
+
+        if (!LoggedInRole.equalsIgnoreCase("Manager")) {
+            return ResponseEntity.status(403).body("You must be a MANAGER to update  a user account");
+        }
+
         try {
             return ResponseEntity.ok(userService.getAllUsers());
         }catch (Exception e) {
@@ -30,8 +39,28 @@ public class UserController {
         }
     }
 
+    @GetMapping("/{userid}")
+    public ResponseEntity <?> getUserById(@PathVariable int userid, HttpSession session) {
+
+        if (session.getAttribute("userId") == null) {
+            return ResponseEntity.status(401).body("You must be logged in to update a user account");
+        }
+        String LoggedInRole = (String) session.getAttribute("role");
+
+        if (!LoggedInRole.equalsIgnoreCase("Manager")) {
+            return ResponseEntity.status(403).body("You must be a MANAGER to update  a user account");
+        }
+
+        try {
+            return ResponseEntity.ok(userService.getUserById(userid));
+        } catch (Exception e){
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
     @PostMapping
-    public ResponseEntity <?> createUser(@RequestBody IncomingUserDto userDTO){
+    public ResponseEntity <Object> createUser(@RequestBody IncomingUserDto userDTO){
+
         try {
             return ResponseEntity.ok(userService.createUser(userDTO));
         }catch (Exception e) {
@@ -40,7 +69,19 @@ public class UserController {
     }
 
     @PatchMapping("/{userid}")
-    public ResponseEntity <?> updateUser(@RequestBody String role, @PathVariable int userid){
+    public ResponseEntity <Object> updateUser(@RequestBody String role, HttpSession session){
+
+        if (session.getAttribute("userId") == null) {
+            return ResponseEntity.status(401).body("You must be logged in to update a user account");
+        }
+        String LoggedInRole = (String) session.getAttribute("role");
+
+        if (!LoggedInRole.equalsIgnoreCase("Manager")) {
+            return ResponseEntity.status(403).body("You must be a MANAGER to update  a user account");
+        }
+
+        int userid = (int) session.getAttribute("userId");
+
         try {
             return ResponseEntity.ok(userService.updateUser(role, userid));
         }catch (Exception e) {
@@ -49,22 +90,31 @@ public class UserController {
     }
 
     @DeleteMapping("/{userid}")
-    public ResponseEntity <?> deleteUser(@PathVariable int userid) {
+    public ResponseEntity <Object> deleteUser(@PathVariable int userid, HttpSession session) {
+
+        if (session.getAttribute("userId") == null) {
+            return ResponseEntity.status(401).body("You must be logged in to update a user account");
+        }
+        String LoggedInRole = (String) session.getAttribute("role");
+
+        if (!LoggedInRole.equalsIgnoreCase("Manager")) {
+            return ResponseEntity.status(403).body("You must be a MANAGER to update  a user account");
+        }
+
+        if (session.getAttribute("userId") == null) {
+            return ResponseEntity.status(401).body("You must be logged in to update a user account");
+        }
+
+        int LoggedUserid = (int) session.getAttribute("userId");
+
+        if (LoggedUserid == userid)
+            return ResponseEntity.status(401).body("You cannot delete your own account");
+
         try {
             return ResponseEntity.ok(userService.deleteUser(userid));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
-
-    @GetMapping("/{userid}")
-    public ResponseEntity <?> getUserById(@PathVariable int userid) {
-        try {
-            return ResponseEntity.ok(userService.getUserById(userid));
-        } catch (Exception e){
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
-    }
-
 }
 

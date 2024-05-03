@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.revature.enums.Roles;
 import com.revature.enums.Status;
 import com.revature.models.dtos.IncomingUserDto;
+import com.revature.models.dtos.OutgoingUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.revature.models.User;
@@ -32,7 +34,7 @@ public class UserService {
      * @return the created reimbursement
      * @throws IllegalArgumentException if no user is found at user ID
      */
-    public User createUser(IncomingUserDto userDTO) {
+    public OutgoingUserDTO createUser(IncomingUserDto userDTO) {
        //Check the validity of all fields of the userDTO object
         if(userDTO.getFirstname().isBlank() || userDTO.getFirstname() == null){
             throw new IllegalArgumentException("Firstname cannot be empty");
@@ -52,7 +54,8 @@ public class UserService {
 
         User user = new User(userDTO.getFirstname(), userDTO.getLastname(), userDTO.getUsername(), userDTO.getPassword());
         user.setRole("employee");
-        return userDAO.save(user);
+        User saveduser = userDAO.save(user);
+        return new OutgoingUserDTO(user.getUsername(), user.getFirstname(), user.getLastname(), user.getRole(), user.getUserId());
     }
 
     /**
@@ -62,25 +65,31 @@ public class UserService {
      * @throws IllegalArgumentException if no user is found at user ID
      */
 
-    public User updateUser(String role, int userid) {
+    public OutgoingUserDTO updateUser(String role, int userid) {
+
+        // Role still needs to be validated - we do allow update, only if the role  it is "pending or 'manager',
         if(role.isBlank() || role == null) {
             throw new IllegalArgumentException("Role cannot be empty");
         }
-        // Role still needs to be validated - we do allow update, only if the role  it is "pending or 'manager',
+        // normalize role to be lowercase and no additional whitespace before or after
+        // format role to use role enum values
+        role = Roles.formatRole(role.toLowerCase().trim());
+
         User user = userDAO.findById(userid).orElseThrow(() -> new IllegalArgumentException("No user found for ID: " + userid));
-        user.setRole(role.trim());
-        return userDAO.save(user);
+        user.setRole(role);
+        userDAO.save(user);
+        return new OutgoingUserDTO(user.getUsername(), user.getFirstname(),user.getLastname(), user.getRole(), user.getUserId());
     }
 
-    public User deleteUser (int userid) {
+    public OutgoingUserDTO deleteUser (int userid) {
         User user = userDAO.findById(userid).orElseThrow(() -> new IllegalArgumentException("No user found for ID: " + userid));
         userDAO.deleteById(userid);
-        return (user);
+        return new OutgoingUserDTO(user.getUsername(), user.getFirstname(), user.getLastname(), user.getRole(), user.getUserId());
     }
 
-    public User getUserById(int userid) {
+    public OutgoingUserDTO getUserById(int userid) {
         User user = userDAO.findById(userid).orElseThrow(() -> new IllegalArgumentException("No user found for ID: " + userid));
-        return (user);
+        return new OutgoingUserDTO(user.getUsername(), user.getFirstname(), user.getLastname(), user.getRole(), user.getUserId());
     }
 
     public Optional<User> loginUser(IncomingUserDto userDTO) throws IllegalArgumentException {
