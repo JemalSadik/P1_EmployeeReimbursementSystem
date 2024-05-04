@@ -7,8 +7,14 @@ The purpose of this project is to create a Java Full Stack Employee Reimbursemen
 ## Tech Stack
 
 - React Frontend
+    - Typescript
+    - Axios
+    - NodeJS
 - Spring Backend
-- Local Postgres Database
+    - Spring Data JPA
+    - Maven
+- Cloud-based Postgres Database
+- Git/Github
 
 ## Functionality
 
