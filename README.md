@@ -39,5 +39,5 @@ Functions focuses on employees submitting reimbursements and managers approving 
 
 ## Contributors
 
-Neil Crum
-Jemal Sadik
+- Neil Crum
+- Jemal Sadik
