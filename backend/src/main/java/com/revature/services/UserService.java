@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.revature.models.User;
 import com.revature.daos.UserDAO;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,7 +35,7 @@ public class UserService {
      * @return the created reimbursement
      * @throws IllegalArgumentException if no user is found at user ID
      */
-    public OutgoingUserDTO createUser(IncomingUserDto userDTO) {
+    public OutgoingUserDTO createUser(IncomingUserDto userDTO) throws IllegalArgumentException {
        //Check the validity of all fields of the userDTO object
         if(userDTO.getFirstname().isBlank() || userDTO.getFirstname() == null){
             throw new IllegalArgumentException("Firstname cannot be empty");
@@ -54,8 +55,12 @@ public class UserService {
 
         User user = new User(userDTO.getFirstname(), userDTO.getLastname(), userDTO.getUsername(), userDTO.getPassword());
         user.setRole("employee");
-        User saveduser = userDAO.save(user);
-        return new OutgoingUserDTO(user.getUsername(), user.getFirstname(), user.getLastname(), user.getRole(), user.getUserId());
+        try {
+            userDAO.save(user);
+            return new OutgoingUserDTO(user.getUsername(), user.getFirstname(), user.getLastname(), user.getRole(), user.getUserId());
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Username already exists");
+        }
     }
 
     /**
