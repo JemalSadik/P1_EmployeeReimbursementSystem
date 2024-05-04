@@ -83,14 +83,14 @@ export const Login: React.FC = () => {
                     <Button type="button" variant="secondary" onClick={() => navigate("/register")}>Register</Button>
                 </div>
                 {successfullyRegistered && (
-                    <Alert variant="success" className="mt-3">
-                        <h3>Success!</h3>
+                    <Alert variant="success" className="mt-3" onClose={() => setSuccessfullyRegistered(false)} dismissible>
+                        <Alert.Heading>Success!</Alert.Heading>
                         <p>You have successfully registered an account</p>
                     </Alert>
                 )}
                 {loginError && (
-                    <Alert variant="danger" className="mt-3">
-                        <h3>Failed!</h3>
+                    <Alert variant="danger" className="mt-3" onClose={() => setLoginError(false)} dismissible>
+                        <Alert.Heading>Failed!</Alert.Heading>
                         <p>{loginErrorMessage}</p>
                     </Alert>
                 )}

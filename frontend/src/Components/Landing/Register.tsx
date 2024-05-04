@@ -86,8 +86,8 @@ export const Register: React.FC = () => {
                     <Button type="button" variant="secondary" onClick={() => navigate("/")}>Back</Button>
                 </div>
                 {showFailedMessage && (
-                    <Alert variant="danger" className="mt-3">
-                        <h3>Failed to register account!</h3>
+                    <Alert variant="danger" className="mt-3" onClose={() => setShowFailedMessage(false)} dismissible>
+                        <Alert.Heading>Failed to register account!</Alert.Heading>
                         <p>{errorMessage}</p>
                     </Alert>
                 )}
