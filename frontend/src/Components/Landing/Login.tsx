@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { Alert, Button, Container, FloatingLabel, Form, InputGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,8 @@ export const Login: React.FC = () => {
     });
     const [passwordIsVisible, setPasswordIsVisible] = useState(false);
     const [successfullyRegistered, setSuccessfullyRegistered] = useState(false);
+    const [loginError, setLoginError] = useState(false);
+    const [loginErrorMessage, setLoginErrorMessage] = useState("");
 
     useEffect(() => {
         const hasRegistered = localStorage.getItem("hasRegistered");
@@ -39,11 +41,17 @@ export const Login: React.FC = () => {
     const login = async () => {
         // TODO: validate username and password
         const resp = await axios.post(baseUrl + "/login", user, {withCredentials: true})
-        .then((resp) => {
+        .then((resp: AxiosResponse) => {
             localStorage.setItem("user", JSON.stringify(resp.data));
             navigate("/dashboard");
         })
-        .catch((error) => alert(error.data));
+        .catch((error: AxiosError) => {
+            if (successfullyRegistered) {
+                setSuccessfullyRegistered(false);
+            }
+            setLoginErrorMessage(`${error.response?.data}`);
+            setLoginError(true);
+        });
     };
 
     return (
@@ -78,6 +86,12 @@ export const Login: React.FC = () => {
                     <Alert variant="success" className="mt-3">
                         <h3>Success!</h3>
                         <p>You have successfully registered an account</p>
+                    </Alert>
+                )}
+                {loginError && (
+                    <Alert variant="danger" className="mt-3">
+                        <h3>Failed!</h3>
+                        <p>{loginErrorMessage}</p>
                     </Alert>
                 )}
             </Container>
