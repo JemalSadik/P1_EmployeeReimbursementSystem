@@ -9,9 +9,11 @@ import { ModalReimbursement } from "../Reimbursement/ModalReimbursement";
 import {User} from "../User/User";
 import { UserModal } from "../User/UserModal";
 import { useNavigate } from "react-router-dom";
-import { log } from "console";
+import { useBackgroundImage } from "../../CustomHooks/useBackgroundImage";
 
 export const Dashboard: React.FC = () => {
+
+    useBackgroundImage();
 
     const user: UserInterface = JSON.parse(localStorage.getItem("user")||"");
     const baseUrl: string|null = localStorage.getItem("baseUrl");
@@ -153,22 +155,15 @@ export const Dashboard: React.FC = () => {
 
     const navigate = useNavigate();
 
-    const logout = async () => {
-        console.log("Logout called");
-        
-        const resp = await axios.post(baseUrl + "/logout", {withCredentials: true})
-        .then((resp: AxiosResponse) => {
-            console.log("Successfully logged out");
-            
+    const logout = async () => {        
+        const resp = await axios.post(baseUrl + "/logout", {}, {withCredentials: true})
+        .then((resp: AxiosResponse) => { 
+            localStorage.removeItem("user");
             navigate("/");
         })
         .catch((error: AxiosError) => {
-            console.log("Failed to log out");
-            
             setAlertErrorMessage(`${error.response?.data}`)
-        })
-        console.log("Unexpected error");
-        
+        })        
     };
 
     if (refreshReimbursements) {
@@ -199,7 +194,11 @@ export const Dashboard: React.FC = () => {
 
     return (
         <Container className="d-flex flex-column justify-content-center m-5 px-5">
-            <Container className="w-75">
+            <Container className="w-75 bg-light bg-opacity-50 rounded p-3">
+                <div className="d-flex flex-row justify-content-between">
+                    <h1 className="fs-3">Welcome, {user.username.toUpperCase()}</h1>
+                    <Button type="button" variant="info" onClick={logout}>Logout</Button>
+                </div>
                 <Form id="table-controls">
                     <Row>
                         <Col md="6">
@@ -239,7 +238,6 @@ export const Dashboard: React.FC = () => {
                         </Col>
                     </Row>
                 </Form>
-                <Button type="button" variant="info" onClick={logout} className="float-end">Logout</Button>
                 {showSuccessAlert && (
                     <Alert variant="success" className="my-3" onClose={() => setShowSuccessAlert(false)} dismissible>
                         <Alert.Heading> Success!</Alert.Heading>

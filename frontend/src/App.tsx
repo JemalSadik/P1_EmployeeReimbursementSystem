@@ -8,7 +8,7 @@ import { Dashboard } from './Components/Dashboard/Dashboard';
 
 function App() {
 
-    localStorage.setItem("baseUrl", "http://localhost:8080")
+    localStorage.setItem("baseUrl", "http://localhost:8080");
 
     return (
         <div className="App">
