@@ -31,30 +31,23 @@ export const UserModal: React.FC<{usr: UserInterface, show: boolean, onHide: () 
 
     let roleInput: string = "";
 
-    const getRole = (input: React.ChangeEvent<HTMLSelectElement>) => {
-        console.log(input.target.value);
-        
+    const getRole = (input: React.ChangeEvent<HTMLSelectElement>) => {        
         roleInput = input.target.value;
     }
 
-    const updateuser = async () => {
-        console.log(roleInput);
-        
+    const updateuser = async () => {        
         const resp = await axios.patch(baseUrl + `/users/${usr.userId}`, roleInput, {withCredentials: true, headers: {
             "Content-Type": "text/plain"
         }})
         .then((resp: AxiosResponse) => {
-            localStorage.setItem("hasUpdated", "true");
             setShowAlertSuccess();
             setAlertSuccessMessage();
             onHide();
             setRefreshUsers();
         })
-        .catch((error: AxiosError) => {
-            console.log(error);
-            
+        .catch((error: AxiosError) => {            
             setShowFailedMessage(true);
-            setErrorMessage(error.message);
+            setErrorMessage(`${error.response?.data}`);
         })
     };
 

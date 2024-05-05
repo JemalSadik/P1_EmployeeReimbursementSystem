@@ -154,7 +154,8 @@ export const Dashboard: React.FC = () => {
 
     const logout = async () => {        
         const resp = await axios.post(baseUrl + "/logout", {}, {withCredentials: true})
-        .then((resp: AxiosResponse) => {            
+        .then((resp: AxiosResponse) => { 
+            localStorage.removeItem("user");
             navigate("/");
         })
         .catch((error: AxiosError) => {
