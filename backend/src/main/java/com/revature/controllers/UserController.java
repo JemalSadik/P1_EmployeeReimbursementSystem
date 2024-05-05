@@ -100,10 +100,6 @@ public class UserController {
             return ResponseEntity.status(403).body("You must be a MANAGER to update  a user account");
         }
 
-        if (session.getAttribute("userId") == null) {
-            return ResponseEntity.status(401).body("You must be logged in to update a user account");
-        }
-
         int LoggedUserid = (int) session.getAttribute("userId");
 
         if (LoggedUserid == userid)

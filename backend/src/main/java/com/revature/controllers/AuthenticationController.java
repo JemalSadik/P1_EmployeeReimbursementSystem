@@ -40,9 +40,13 @@ public class AuthenticationController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser(HttpSession session) {
+        System.out.println("Called logout");
+        System.out.println(session.getAttribute("userId"));
         if (session.getAttribute("userId") == null) {
             return ResponseEntity.status(401).body("No user is logged in");
         }
+
+        System.out.println("User logged in to logout");
         session.invalidate();
         return ResponseEntity.ok("You have been logged out!");
     }
