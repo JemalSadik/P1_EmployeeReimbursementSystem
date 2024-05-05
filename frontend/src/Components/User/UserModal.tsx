@@ -79,8 +79,8 @@ export const UserModal: React.FC<{usr: UserInterface, show: boolean, onHide: () 
                     <Form.Group>
                         <Form.FloatingLabel label="Role">
                             <Form.Select defaultValue={usr.role} onChange={getRole}>
-                                <option value="Manager">Manager</option>
-                                <option value="Employee">Employee</option>
+                                <option value="manager">Manager</option>
+                                <option value="employee">Employee</option>
                             </Form.Select>
                         </Form.FloatingLabel>
                     </Form.Group>
