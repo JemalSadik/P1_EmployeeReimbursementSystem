@@ -47,5 +47,4 @@ public class AuthenticationController {
         session.invalidate();
         return ResponseEntity.ok("You have been logged out!");
     }
-
 }
