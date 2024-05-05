@@ -15,6 +15,7 @@ The purpose of this project is to create a Java Full Stack Employee Reimbursemen
     - Maven
 - Cloud-based Postgres Database
 - Git/Github
+- DBeaver
 
 ## Functionality
 
