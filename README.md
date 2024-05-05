@@ -50,4 +50,4 @@ Users can perform ONLY the permitted functins depending on their role.
 ## Contributors
 
 - Neil Crum
-- Jemal Sadik
+- Jemal Ebrahim M Sadik
