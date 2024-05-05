@@ -66,8 +66,13 @@ export const ModalReimbursement: React.FC<{reimbursement: ReimbursementInterface
         }
     }
 
+    const onClickClose = () => {
+        setShowErrorMessage(false);
+        onHide();
+    }
+
     return (
-        <Modal show={show} onHide={onHide} >
+        <Modal show={show} onHide={onClickClose} >
             <Modal.Header closeButton>
                 <Modal.Title id={`reimbursementModal${reimbursement.reimbId}Label`}>
                     <h2>Reimbursement #{reimbursement.reimbId}</h2>
@@ -98,14 +103,14 @@ export const ModalReimbursement: React.FC<{reimbursement: ReimbursementInterface
                     </Form.Group>
                 </Form>
                 {showErrorMessage && (
-                    <Alert variant="danger" className="mt-3" onClose={() => setShowErrorMessage(false)}>
+                    <Alert variant="danger" className="mt-3" onClose={() => setShowErrorMessage(false)} dismissible>
                         <Alert.Heading>Failed!</Alert.Heading>
                         <p>{errorMessage}</p>
                     </Alert>
                 )}
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>Close</Button>
+                <Button variant="secondary" onClick={onClickClose}>Close</Button>
                 <Button variant="primary" onClick={updateReimbursement}>Save</Button>
             </Modal.Footer>
         </Modal>

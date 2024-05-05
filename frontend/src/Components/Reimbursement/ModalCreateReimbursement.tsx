@@ -52,8 +52,13 @@ export const ModalCreateReimbursement: React.FC<{show: boolean, onHide: () => vo
         });
     }
 
+    const onClickClose = () => {
+        setShowErrorAlert(false);
+        onHide();
+    }
+
     return (
-        <Modal show={show} onHide={onHide}>
+        <Modal show={show} onHide={onClickClose}>
             <Modal.Header closeButton>
                 <Modal.Title id="createReimbursementModal">
                     <h2>Create Reimbursement</h2>
@@ -84,7 +89,7 @@ export const ModalCreateReimbursement: React.FC<{show: boolean, onHide: () => vo
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="primary" onClick={createReimbursement}>Save</Button>
-                <Button variant="secondary" onClick={onHide}>Close</Button>
+                <Button variant="secondary" onClick={onClickClose}>Close</Button>
             </Modal.Footer>
         </Modal>
     )

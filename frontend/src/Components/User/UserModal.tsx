@@ -51,8 +51,13 @@ export const UserModal: React.FC<{usr: UserInterface, show: boolean, onHide: () 
         })
     };
 
+    const onClickClose = () => {
+        setShowFailedMessage(false);
+        onHide();
+    }
+
     return (
-        <Modal show={show} onHide={onHide}>
+        <Modal show={show} onHide={onClickClose}>
             <Modal.Header closeButton>
                 <Modal.Title className="text-center">
                     <h1 className="fs-2">User Account Update Form</h1>
@@ -89,7 +94,7 @@ export const UserModal: React.FC<{usr: UserInterface, show: boolean, onHide: () 
             </Modal.Body>
             <Modal.Footer>
                 <Button type="button" variant="primary" className="mx-3" onClick={updateuser}>Save</Button>
-                <Button type="button" variant="secondary" onClick={onHide}>Back</Button>
+                <Button type="button" variant="secondary" onClick={onClickClose}>Back</Button>
             </Modal.Footer>
         </Modal>
     )
