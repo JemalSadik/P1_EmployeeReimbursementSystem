@@ -195,8 +195,8 @@ export const Dashboard: React.FC = () => {
     return (
         <Container className="d-flex flex-column justify-content-center m-5 px-5">
             <Container className="w-75 bg-light bg-opacity-50 rounded p-3">
-                <div className="d-flex flex-row justify-content-between">
-                    <h1 className="fs-3">Welcome, {user.username.toUpperCase()}</h1>
+                <div className="m-3 d-flex flex-row justify-content-between">
+                    <h1 className="fs-4">Logged in user: {user.username.toUpperCase()} ({user.role})</h1>
                     <Button type="button" variant="info" onClick={logout}>Logout</Button>
                 </div>
                 <Form id="table-controls">
