@@ -2,11 +2,13 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { useState } from "react";
 import { Alert, Button, Container, FloatingLabel, Form, InputGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useBackgroundImage } from "../../CustomHooks/useBackgroundImage";
 
 export const Register: React.FC = () => {
 
     const baseUrl = localStorage.getItem("baseUrl");
 
+    useBackgroundImage();
     const navigate = useNavigate();
 
     const [user, setUser] = useState({
@@ -49,7 +51,7 @@ export const Register: React.FC = () => {
 
     return (
         <Container className="d-flex flex-column justify-content-center m-5 px-5">
-            <Container className="w-75">
+            <Container className="w-75 bg-light bg-opacity-50 rounded p-3">
                 <header className="text-center">
                     <h1 className="fs-2">Employee Registration Form</h1>
                     <p className="fs-5">Fill out the form below to register for an account</p>
