@@ -6,8 +6,8 @@ import java.util.Optional;
 import com.revature.enums.Roles;
 import com.revature.models.dtos.IncomingUserDto;
 import com.revature.models.dtos.OutgoingUserDTO;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.revature.models.User;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    // private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     private UserDAO userDAO;
 
@@ -50,12 +50,12 @@ public class UserService {
         }
 
         if(userDTO.getUsername().isBlank() || userDTO.getUsername() == null){
-            // LOGGER.error("Username cannot be empty");
+            LOGGER.error("Username cannot be empty");
             throw new IllegalArgumentException("Username cannot be empty");
         }
 
         if(userDTO.getPassword().isBlank() || userDTO.getPassword() == null){
-            // LOGGER.error("Password cannot be empty");
+            LOGGER.error("Password cannot be empty");
             throw new IllegalArgumentException("Password cannot be empty");
         }
 
@@ -63,10 +63,10 @@ public class UserService {
         user.setRole("employee");
         try {
             userDAO.save(user);
-            // LOGGER.info("Successfully created user");
+            LOGGER.info("Successfully created user");
             return new OutgoingUserDTO(user.getUsername(), user.getFirstname(), user.getLastname(), user.getRole(), user.getUserId());
         } catch (DataIntegrityViolationException e) {
-            // LOGGER.error("Username already exists");
+            LOGGER.error("Username already exists");
             throw new IllegalArgumentException("Username already exists");
         }
     }
@@ -82,7 +82,7 @@ public class UserService {
 
         // Role still needs to be validated - we do allow update, only if the role  it is "pending or 'manager',
         if(role.isBlank() || role == null) {
-            // LOGGER.error("Role cannot be empty");
+            LOGGER.error("Role cannot be empty");
             throw new IllegalArgumentException("Role cannot be empty");
         }
         // normalize role to be lowercase and no additional whitespace before or after
@@ -92,26 +92,26 @@ public class UserService {
         User user = userDAO.findById(userid).orElseThrow(() -> new IllegalArgumentException("No user found for ID: " + userid));
         user.setRole(role);
         userDAO.save(user);
-        // LOGGER.info("Successfully updated user");
+        LOGGER.info("Successfully updated user");
         return new OutgoingUserDTO(user.getUsername(), user.getFirstname(),user.getLastname(), user.getRole(), user.getUserId());
     }
 
     public OutgoingUserDTO deleteUser (int userid) {
         User user = userDAO.findById(userid).orElseThrow(() -> new IllegalArgumentException("No user found for ID: " + userid));
         userDAO.deleteById(userid);
-        // LOGGER.info("Successfully deleted user");
+        LOGGER.info("Successfully deleted user");
         return new OutgoingUserDTO(user.getUsername(), user.getFirstname(), user.getLastname(), user.getRole(), user.getUserId());
     }
 
     public OutgoingUserDTO getUserById(int userid) {
         User user = userDAO.findById(userid).orElseThrow(() -> new IllegalArgumentException("No user found for ID: " + userid));
-        // LOGGER.info("Successfully retrieved user");
+        LOGGER.info("Successfully retrieved user");
         return new OutgoingUserDTO(user.getUsername(), user.getFirstname(), user.getLastname(), user.getRole(), user.getUserId());
     }
 
     public Optional<User> loginUser(IncomingUserDto userDTO) throws IllegalArgumentException {
         // TODO: validity checks
-        // LOGGER.info("Successfully logged in user: {}", userDTO.getUsername());
+        LOGGER.info("Logging in user: {}", userDTO.getUsername());
         return userDAO.findByUsernameAndPassword(userDTO.getUsername(), userDTO.getPassword());
     }
 

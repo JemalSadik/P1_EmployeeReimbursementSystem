@@ -6,8 +6,8 @@ import com.revature.enums.Status;
 import com.revature.models.Reimbursement;
 import com.revature.models.User;
 import com.revature.models.dtos.IncomingReimbursementDTO;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import java.util.*;
 @Service
 public class ReimbursementService {
 
-    //private static final Logger LOGGER = LoggerFactory.getLogger(ReimbursementService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReimbursementService.class);
 
     private ReimbursementDAO reimbDAO;
     private UserDAO userDAO;
@@ -32,7 +32,7 @@ public class ReimbursementService {
      * @return a list of all reimbursements
      */
     public List<Reimbursement> getAllReimbursements() {
-        // LOGGER.info("Retrieving all reimbursements");
+        LOGGER.info("Retrieving all reimbursements");
         return reimbDAO.findAll();
     }
 
@@ -41,7 +41,7 @@ public class ReimbursementService {
      * @return a list of all reimbursements
      */
     public List<Reimbursement> getAllPendingReimbursement() {
-        // LOGGER.info("Retrieving all pending reimbursements");
+        LOGGER.info("Retrieving all pending reimbursements");
         return reimbDAO.findByStatus(Status.PENDING.getDescription());
     }
 
@@ -53,7 +53,7 @@ public class ReimbursementService {
      */
     public List<Reimbursement> getAllReimbursementsByUserId(int userId) throws IllegalArgumentException {
         User user = userDAO.findById(userId).orElseThrow(() -> new IllegalArgumentException("No user found for ID: " + userId));
-        // LOGGER.info("Retrieving all reimbursements for user ID: {}", userId);
+        LOGGER.info("Retrieving all reimbursements for user ID: {}", userId);
         return reimbDAO.findByUserUserId(userId);
     }
 
@@ -65,7 +65,7 @@ public class ReimbursementService {
      */
     public List<Reimbursement> getAllPendingReimbursementsByUserId(int userId) throws IllegalArgumentException {
         User user = userDAO.findById(userId).orElseThrow(() -> new IllegalArgumentException("No user found for ID: " + userId));
-        // LOGGER.info("Retrieving all pending reimbursements for user ID: {}", userId);
+        LOGGER.info("Retrieving all pending reimbursements for user ID: {}", userId);
         return reimbDAO.findByUserUserIdAndStatus(userId, Status.PENDING.getDescription());
     }
 
@@ -80,7 +80,7 @@ public class ReimbursementService {
         Reimbursement reimb = new Reimbursement(reimbursementDTO.getDescription(), reimbursementDTO.getAmount(), reimbursementDTO.getStatus(), null);
 
         User user = userDAO.findById(reimbursementDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException("No user found for ID: " + reimbursementDTO.getUserId()));
-        // LOGGER.info("Creating reimbursement");
+        LOGGER.info("Creating reimbursement");
         reimb.setUser(user);
         return reimbDAO.save(reimb);
     }
@@ -103,9 +103,10 @@ public class ReimbursementService {
         status = Status.formatStatus(status.toLowerCase().trim());
         // update reimbursement status
         reimb.setStatus(status);
-        // LOGGER.info("Updating reimbursement status for reimbursement ID: {}", reimbId);
+        LOGGER.info("Updating reimbursement status for reimbursement ID: {}", reimbId);
         // save updated reimbursement
         reimbDAO.save(reimb);
+        LOGGER.info("Updated reimbursement status for reimbursement ID: {}", reimbId);
         // return updated reimbursement
         return reimb;
     }
@@ -125,7 +126,7 @@ public class ReimbursementService {
         }
         // update description
         reimb.setDescription(description);
-        // LOGGER.info("Updating reimbursement description for reimbursement ID: {}", reimbId);
+        LOGGER.info("Updating reimbursement description for reimbursement ID: {}", reimbId);
         // save reimbursement
         reimbDAO.save(reimb);
         // return updated reimbursement
