@@ -275,8 +275,8 @@ export const Dashboard: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody className="table-group-divider">
-                        {users.map((user) => 
-                            <User key={user.userId} user={user} showModal={() => handleUserShowModal(user)} deleteUser={() => deleteUser(user.userId)} />
+                        {users.map((usr) => 
+                            <User key={usr.userId} user={usr} showModal={() => handleUserShowModal(usr)} deleteUser={() => deleteUser(usr.userId)} />
                         )}
                     </tbody>
                 </Table>}
