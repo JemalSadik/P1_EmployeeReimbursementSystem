@@ -8,7 +8,7 @@ export const Reimbursement: React.FC<{reimbursement: ReimbursementInterface, sho
         <tr onDoubleClick={showModal}>
             <th>{reimbursement.reimbId}</th>
             <td>{reimbursement.description}</td>
-            <td>{reimbursement.amount}</td>
+            <td>${reimbursement.amount}</td>
             <td>{reimbursement.status}</td>
         </tr>
     )

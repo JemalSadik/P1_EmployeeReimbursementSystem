@@ -43,7 +43,7 @@ export const Register: React.FC = () => {
         })
         .catch((error: AxiosError) => {
             setShowFailedMessage(true);
-            setErrorMessage(error.message);
+            setErrorMessage(`${error.response?.data}`);
         })
     };
 

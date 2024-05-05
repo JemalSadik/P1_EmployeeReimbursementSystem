@@ -4,7 +4,7 @@ import { Alert, Button, Modal, FloatingLabel, Form, InputGroup } from "react-boo
 import { useNavigate } from "react-router-dom";
 import { UserInterface } from "../../Interfaces/UserInterface";
 
-export const UserModal: React.FC<{usr: UserInterface, show: boolean, onHide: () => void}> = ({usr, show, onHide}) => {
+export const UserModal: React.FC<{usr: UserInterface, show: boolean, onHide: () => void, setShowAlertSuccess: () => void, setAlertSuccessMessage: () => void, setRefreshUsers: () => void}> = ({usr, show, onHide, setShowAlertSuccess, setAlertSuccessMessage, setRefreshUsers}) => {
 
     const baseUrl = localStorage.getItem("baseUrl");
 
@@ -45,7 +45,10 @@ export const UserModal: React.FC<{usr: UserInterface, show: boolean, onHide: () 
         }})
         .then((resp: AxiosResponse) => {
             localStorage.setItem("hasUpdated", "true");
+            setShowAlertSuccess();
+            setAlertSuccessMessage();
             onHide();
+            setRefreshUsers();
         })
         .catch((error: AxiosError) => {
             console.log(error);

@@ -2,8 +2,9 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
 import { ReimbursementProps } from "../../Interfaces/ReimbursementModalInterface";
 import { useState } from "react";
+import { ReimbursementInterface } from "../../Interfaces/ReimbursementInterface";
 
-export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement, show, onHide}) => {
+export const ModalReimbursement: React.FC<{reimbursement: ReimbursementInterface, show: boolean, onHide: () => void, setShowAlertSuccess: () => void, setAlertSuccessMessage: () => void, refreshReimbursements: () => void}> = ({reimbursement, show, onHide, setShowAlertSuccess, setAlertSuccessMessage, refreshReimbursements}) => {
 
     const baseUrl: string|null = localStorage.getItem("baseUrl");
     const user = JSON.parse(localStorage.getItem("user")||"{}");
@@ -11,9 +12,8 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
     let descInput: string = reimbursement.description ? reimbursement.description : "";
     let statusInput: string = reimbursement.status ? reimbursement.status : "";
 
-    const [validated, setValidated] = useState(false);
-    const [descriptionError, setVDescriptionError] = useState("");
-    const [statusError, setStatusError] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
 
     const getDesc = (input: React.ChangeEvent<HTMLTextAreaElement>) => {
         descInput = input.target.value;
@@ -25,35 +25,44 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
     const updateReimbursement = async () => {
         let checkClose: boolean = true;
         // TODO: add {withCredentials: true} to axios request for session support
-        if (descInput !== reimbursement.description && descInput !== "") {
+        if (descInput === "") {
+            checkClose = false;
+            setErrorMessage("Description cannot be empty");
+            setShowErrorMessage(true);
+            return;
+        }
+        else if (descInput !== reimbursement.description) {
             const resp = await axios.patch(baseUrl + `/reimbursements/${reimbursement.reimbId}/description`, descInput, {withCredentials: true, headers: {
                 "Content-Type": "text/plain"
             }})
                 .then((resp: AxiosResponse) => {
-                    console.log(resp.data);
+                    setShowAlertSuccess();
+                    setAlertSuccessMessage();
+                    refreshReimbursements();
                 })
                 .catch((error: AxiosError) => {
                     checkClose = false;
-                    setVDescriptionError(error.message);
+                    setErrorMessage(`${error.response?.data}`);
+                    setShowErrorMessage(true);
                 });
         }
         // TODO: check if user role is manager first before sending request to update status
-        if (statusInput !== reimbursement.status && statusInput !== "") {
+        else if (statusInput !== reimbursement.status && statusInput !== "") {
             const resp = await axios.patch(baseUrl + `/reimbursements/${reimbursement.reimbId}/status`, statusInput, {withCredentials: true, headers: {
                 "Content-Type": "text/plain"
             }})
                 .then((resp: AxiosResponse) => {
-                    console.log(resp.data);
+                    setShowAlertSuccess();
+                    setAlertSuccessMessage();
                 })
                 .catch((error: AxiosError) => {
                     checkClose = false;
-                    setStatusError(error.message);
+                    setErrorMessage(`${error.response?.data}`);
+                    setShowErrorMessage(true);
                 });
         }
         if (checkClose) {
             onHide();
-        } else {
-            setValidated(true);
         }
     }
 
@@ -65,11 +74,10 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form noValidate validated={validated}>
+                <Form>
                     <Form.Group className="mb-3">
                         <Form.FloatingLabel label="Description" controlId={`reimbDescription${reimbursement.reimbId}`}>
                             {reimbursement.status == "Pending" ? <Form.Control as="textarea" className="textbox" defaultValue={reimbursement.description} onChange={getDesc} /> : <Form.Control as="textarea" className="textbox" value={reimbursement.description} disabled />}
-                            <Form.Control.Feedback type="invalid">{descriptionError}</Form.Control.Feedback>
                         </Form.FloatingLabel>
                     </Form.Group>
                     <Form.Group className="mb-3">
@@ -86,10 +94,15 @@ export const ModalReimbursement: React.FC<ReimbursementProps> = ({reimbursement,
                             </Form.Select> : <Form.Select aria-label="Reimbursement Status" disabled>
                                 <option value={reimbursement.status} selected>{reimbursement.status}</option>
                             </Form.Select>}
-                            <Form.Control.Feedback type="invalid">{statusError}</Form.Control.Feedback>
                         </Form.FloatingLabel>
                     </Form.Group>
                 </Form>
+                {showErrorMessage && (
+                    <Alert variant="danger" className="mt-3" onClose={() => setShowErrorMessage(false)}>
+                        <Alert.Heading>Failed!</Alert.Heading>
+                        <p>{errorMessage}</p>
+                    </Alert>
+                )}
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={onHide}>Close</Button>

@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react"
-import { Button, Col, Container, Form, Row, Table } from "react-bootstrap"
+import { Alert, Button, Col, Container, Form, Row, Table } from "react-bootstrap"
 import { Reimbursement } from "../Reimbursement/Reimbursement";
 import { ReimbursementInterface } from "../../Interfaces/ReimbursementInterface";
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { UserInterface } from "../../Interfaces/UserInterface";
 import { ModalCreateReimbursement } from "../Reimbursement/ModalCreateReimbursement";
 import { ModalReimbursement } from "../Reimbursement/ModalReimbursement";
 import {User} from "../User/User";
 import { UserModal } from "../User/UserModal";
+import { useNavigate } from "react-router-dom";
+import { log } from "console";
 
 export const Dashboard: React.FC = () => {
 
@@ -31,6 +33,15 @@ export const Dashboard: React.FC = () => {
         userId: 0,
         username: ""
     });
+
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+    const [alertSuccessMessage, setAlertSuccessMessage] = useState("");
+    const [showErrorAlert, setShowErrorAlert] = useState(false);
+    const [alertErrorMessage, setAlertErrorMessage] = useState("");
+
+    const [refreshReimbursements, setRefreshReimbursements] = useState(false);
+    const [currentView, setCurrentView] = useState("myReimbursements");
+    const [refreshUsers, setRefreshUsers] = useState(false);
 
     const getType = (input: React.ChangeEvent<HTMLInputElement>) => {
         setType(input.target.value);
@@ -59,9 +70,17 @@ export const Dashboard: React.FC = () => {
         setUsers(resp.data);
     }
 
-    const getUserByUserId = async () => {
-        const resp = await axios.get(baseUrl + `/users/userid`, {withCredentials: true});
-        setUsers(resp.data);
+    const deleteUser = async (userId: number) => {
+        const resp = await axios.delete(baseUrl + `/users/${userId}`, {withCredentials: true})
+        .then((res: AxiosResponse) => {
+            setShowSuccessAlert(true);
+            setAlertSuccessMessage("Successfully deleted user!");
+            getAllUsers();
+        })
+        .catch((error: AxiosError) => {
+            setShowErrorAlert(true);
+            setAlertErrorMessage(`${error.response?.data}`);
+        });
     }
 
     useEffect(() => {
@@ -77,25 +96,32 @@ export const Dashboard: React.FC = () => {
         switch (view) {
             case "myReimbursements":
                 getAllReimbursementsByUserId();
+                setCurrentView("myReimbursements");
                 return;
             case "myPending":
                 getAllPendingReimbursementsByUserId();
+                setCurrentView("myPending");
                 return;
             case "allReimbursements":
                 if (user.role.toLowerCase() !== "manager") {
+                    // TODO: change to alert component
                     alert("You must be a MANAGER to view all reimbursements");
                     return;
                 }
                 getAllReimbursements();
+                setCurrentView("allReimbursements");
                 return;
             case "allPending":
                 if (user.role.toLowerCase() !== "manager") {
+                    // TODO: change to alert component
                     alert("You must be a MANAGER to view all pending reimbursements");
                     return;
                 }
                 getAllPendingReimbursements();
+                setCurrentView("allPending");
                 return;
             default:
+                // TODO: change to alert component
                 alert("Invalid view type!")
                 return;
         }
@@ -123,6 +149,52 @@ export const Dashboard: React.FC = () => {
 
     const handleUserCloseModal = () => {
         setUserShowModal(false);
+    };
+
+    const navigate = useNavigate();
+
+    const logout = async () => {
+        console.log("Logout called");
+        
+        const resp = await axios.post(baseUrl + "/logout", {withCredentials: true})
+        .then((resp: AxiosResponse) => {
+            console.log("Successfully logged out");
+            
+            navigate("/");
+        })
+        .catch((error: AxiosError) => {
+            console.log("Failed to log out");
+            
+            setAlertErrorMessage(`${error.response?.data}`)
+        })
+        console.log("Unexpected error");
+        
+    };
+
+    if (refreshReimbursements) {
+        // then refresh view based on current view
+        switch (currentView) {
+            case "myReimbursements":
+                getAllReimbursementsByUserId();
+                break;
+            case "myPending":
+                getAllPendingReimbursementsByUserId();
+                break;
+            case "allReimbursements":
+                getAllReimbursements();
+                break;
+            case "allPending":
+                getAllPendingReimbursements();
+                break;
+            default:
+                break;
+        }
+        setRefreshReimbursements(false);
+    }
+
+    if (refreshUsers) {
+        getAllUsers();
+        setRefreshUsers(false);
     }
 
     return (
@@ -167,6 +239,19 @@ export const Dashboard: React.FC = () => {
                         </Col>
                     </Row>
                 </Form>
+                <Button type="button" variant="info" onClick={logout} className="float-end">Logout</Button>
+                {showSuccessAlert && (
+                    <Alert variant="success" className="my-3" onClose={() => setShowSuccessAlert(false)} dismissible>
+                        <Alert.Heading> Success!</Alert.Heading>
+                        <p>{alertSuccessMessage}</p>
+                    </Alert>
+                )}
+                {showErrorAlert && (
+                    <Alert variant="danger" className="my-3" onClose={() => setShowErrorAlert(false)} dismissible>
+                        <Alert.Heading>Failed!</Alert.Heading>
+                        <p>{alertErrorMessage}</p>
+                    </Alert>
+                )}
                 {type === "Reimbursements" ? <Table id="reimbursement-table" className="mt-3" striped hover>
                     <thead>
                         <tr>
@@ -193,13 +278,13 @@ export const Dashboard: React.FC = () => {
                     </thead>
                     <tbody className="table-group-divider">
                         {users.map((user) => 
-                            <User key={user.userId} user={user} showModal={() => handleUserShowModal(user)} />
+                            <User key={user.userId} user={user} showModal={() => handleUserShowModal(user)} deleteUser={() => deleteUser(user.userId)} />
                         )}
                     </tbody>
                 </Table>}
-                <ModalCreateReimbursement show={showCreateReimbursementModal} onHide={handleCloseCreateReimbursementModal}/>
-                <ModalReimbursement reimbursement={selectedReimbursement} show={showReimbursementModal} onHide={handleCloseReimbursementModal}/>
-                <UserModal usr={selectedUser} show={showUserModal} onHide={handleUserCloseModal}/>
+                <ModalCreateReimbursement show={showCreateReimbursementModal} onHide={handleCloseCreateReimbursementModal} setShowAlertSuccess={() => setShowSuccessAlert(true)} setAlertSuccessMessage={() => setAlertSuccessMessage("Created new reimbursement")} refreshReimbursements={() => setRefreshReimbursements(true)}/>
+                <ModalReimbursement reimbursement={selectedReimbursement} show={showReimbursementModal} onHide={handleCloseReimbursementModal} setShowAlertSuccess={() => setShowSuccessAlert(true)} setAlertSuccessMessage={() => setAlertSuccessMessage("Updated reimbursement")} refreshReimbursements={() => setRefreshReimbursements(true)}/>
+                <UserModal usr={selectedUser} show={showUserModal} onHide={handleUserCloseModal} setShowAlertSuccess={() => setShowSuccessAlert(true)} setAlertSuccessMessage={() => setAlertSuccessMessage("Updated user")} setRefreshUsers={() => setRefreshUsers(true)}/>
             </Container>
         </Container>
     )
