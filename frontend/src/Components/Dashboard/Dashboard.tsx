@@ -9,7 +9,6 @@ import { ModalReimbursement } from "../Reimbursement/ModalReimbursement";
 import {User} from "../User/User";
 import { UserModal } from "../User/UserModal";
 import { useNavigate } from "react-router-dom";
-import { log } from "console";
 
 export const Dashboard: React.FC = () => {
 
@@ -153,22 +152,15 @@ export const Dashboard: React.FC = () => {
 
     const navigate = useNavigate();
 
-    const logout = async () => {
-        console.log("Logout called");
-        
-        const resp = await axios.post(baseUrl + "/logout", {withCredentials: true})
-        .then((resp: AxiosResponse) => {
-            console.log("Successfully logged out");
-            
+    const logout = async () => {        
+        const resp = await axios.post(baseUrl + "/logout", {}, {withCredentials: true})
+        .then((resp: AxiosResponse) => { 
+            localStorage.removeItem("user");
             navigate("/");
         })
         .catch((error: AxiosError) => {
-            console.log("Failed to log out");
-            
             setAlertErrorMessage(`${error.response?.data}`)
-        })
-        console.log("Unexpected error");
-        
+        })        
     };
 
     if (refreshReimbursements) {

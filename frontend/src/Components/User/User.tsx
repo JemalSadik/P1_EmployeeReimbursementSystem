@@ -4,10 +4,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 
 export const User: React.FC<{user: UserInterface, showModal: () => void, deleteUser: () => void}> = ({user, showModal, deleteUser}) => {
 
-    const baseUrl: string|null = localStorage.getItem("baseUrl");
-
-    console.log("user", showModal);
-    
+    const baseUrl: string|null = localStorage.getItem("baseUrl");    
 
     return (
         <tr onDoubleClick={showModal}>
