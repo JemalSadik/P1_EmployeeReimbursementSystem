@@ -1,15 +1,13 @@
 package com.revature.services;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.revature.enums.Roles;
-import com.revature.enums.Status;
 import com.revature.models.dtos.IncomingUserDto;
 import com.revature.models.dtos.OutgoingUserDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.revature.models.User;
@@ -20,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    // private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     private UserDAO userDAO;
 
