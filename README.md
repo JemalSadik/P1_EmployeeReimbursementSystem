@@ -42,7 +42,7 @@ Functions focuses on employees submitting reimbursements and managers approving 
 
 Users must login to perform any functions other than logging-in or creating an account.
 
-Users can perform ONLY the permitted functins depending on their role.
+Users can perform ONLY the permitted functions depending on their role.
 
 ## Database ERD
 
