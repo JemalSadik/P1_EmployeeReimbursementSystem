@@ -38,7 +38,6 @@ export const ModalReimbursement: React.FC<{reimbursement: ReimbursementInterface
                 .then((resp: AxiosResponse) => {
                     setShowAlertSuccess();
                     setAlertSuccessMessage();
-                    refreshReimbursements();
                 })
                 .catch((error: AxiosError) => {
                     checkClose = false;
@@ -64,6 +63,7 @@ export const ModalReimbursement: React.FC<{reimbursement: ReimbursementInterface
         if (checkClose) {
             setShowErrorMessage(false);
             onHide();
+            refreshReimbursements();
         }
     }
 
