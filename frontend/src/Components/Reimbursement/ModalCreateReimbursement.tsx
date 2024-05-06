@@ -44,6 +44,7 @@ export const ModalCreateReimbursement: React.FC<{show: boolean, onHide: () => vo
         }, {withCredentials: true}).then((resp: AxiosResponse) => {
             setAlertSuccessMessage();
             setShowAlertSuccess();
+            setShowErrorAlert(false);
             onHide();
             // Refresh reimbursement list based on view
             refreshReimbursements();

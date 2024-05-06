@@ -42,6 +42,7 @@ export const UserModal: React.FC<{usr: UserInterface, show: boolean, onHide: () 
         .then((resp: AxiosResponse) => {
             setShowAlertSuccess();
             setAlertSuccessMessage();
+            setShowFailedMessage(false);
             onHide();
             setRefreshUsers();
         })

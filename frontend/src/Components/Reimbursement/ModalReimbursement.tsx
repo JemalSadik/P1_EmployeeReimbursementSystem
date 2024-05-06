@@ -62,6 +62,7 @@ export const ModalReimbursement: React.FC<{reimbursement: ReimbursementInterface
                 });
         }
         if (checkClose) {
+            setShowErrorMessage(false);
             onHide();
         }
     }
