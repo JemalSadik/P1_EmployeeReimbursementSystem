@@ -16,7 +16,8 @@ export const useBackgroundImage = () => {
                 style("url('/images/login-background1.png')");
                 break;
             case "/register":
-                style("url('/images/register-background1.png')");
+                //style("url('/images/register-background1.png')");
+                style("url('/images/login-background1.png')");
                 break;
             case "/dashboard":
                 style("url('/images/dashboard-background1.png')");
