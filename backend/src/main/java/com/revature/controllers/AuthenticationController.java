@@ -27,7 +27,7 @@ public class AuthenticationController {
     public ResponseEntity<?> loginUser(@RequestBody IncomingUserDto userDTO, HttpSession session) {
         Optional<User> optionalUser = userService.loginUser(userDTO);
         if (optionalUser.isEmpty()) {
-            return ResponseEntity.status(401).body("Login failed, invalid username or password");
+            return ResponseEntity.status(401).body("Login failed, invalid username or password. If you do not have an account, please register");
         }
         User user = optionalUser.get();
 
